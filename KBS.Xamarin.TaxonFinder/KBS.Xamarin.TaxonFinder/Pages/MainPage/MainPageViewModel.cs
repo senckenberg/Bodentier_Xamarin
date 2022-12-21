@@ -22,6 +22,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
         private static RecordDatabase _database;
         private static ContentPage _hintPage;
+        private static string _hintPageAsString;
         private bool _actionNecessary;
         private string _hintLabelText;
         private string _hintButtonText;
@@ -99,6 +100,8 @@ namespace KBS.App.TaxonFinder.ViewModels
         public MainPageViewModel()
         {
             GetToHintCommand = new Command(async () => await GetToHint());
+            // Handle when your app starts
+            //CheckForTutorial();
         }
 
         #endregion
@@ -108,7 +111,22 @@ namespace KBS.App.TaxonFinder.ViewModels
         public ICommand GetToHintCommand { get; set; }
         private async Task GetToHint()
         {
-            await App.Current.MainPage.Navigation.PushAsync(_hintPage);
+            if (_hintPageAsString == "RegsterDevice")
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new RegisterDevice());
+            }
+            else if (_hintPageAsString == "UpdateData")
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new UpdateData());
+            }
+            else if (_hintPageAsString == "RecordList")
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new RecordList());
+            }
+            else
+            {
+                //Fallback?
+            }
         }
 
         #endregion
@@ -135,8 +153,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(new[] { Permission.Storage });
                     statusStorage = results[Permission.Storage];
                 }
-
-                if (statusStorage == PermissionStatus.Granted)
+                else if (statusStorage == PermissionStatus.Granted)
                 {
                     registered = true;
                     var synced = false;
@@ -151,40 +168,51 @@ namespace KBS.App.TaxonFinder.ViewModels
                     }
                     try
                     {
-                        synced = !(Database.GetRecordsAsync().Result.Any(i => i.IsEditable));
+                        synced = !(Database.GetRecordsAsync().Result.Any(i => !i.IsSynced));
                     }
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex.Message);
                         synced = true;
                     }
-                    ActionNecessary = !synced;
 
+                    ActionNecessary = !synced;
                     if (!registered && !synced)
                     {
-                        _hintPage = new RegisterDevice();
+                        //_hintPage = new RegisterDevice();
+                        _hintPageAsString = "RegisterDevice";
                         HintLabelText = "Zur Synchronisation von Fundmeldungen anmelden.";
                         HintButtonText = "Anmeldung öffnen";
                     }
                     else if (!synced)
                     {
-                        _hintPage = new RecordList();
+                        //_hintPage = new RecordList();
+                        _hintPageAsString = "RecordList";
                         HintLabelText = "Es gibt derzeit unsynchronisierte Fundmeldungen.";
                         HintButtonText = "Fundliste öffnen";
                     }
-                    else if (!ImagesLoaded)
+                    else
                     {
-                        ActionNecessary = true;
-                        _hintPage = new UpdateData();
-                        HintLabelText = "Aktualisiere die Artinformationen und lade Bilder zur Offline-Nutzung herunter.";
-                        HintButtonText = "Aktualisierung öffnen";
-                    }
-                    else if (!ImagesUpdated)
-                    {
-                        ActionNecessary = true;
-                        _hintPage = new UpdateData();
-                        HintLabelText = "Neue Daten stehen zur Verfügung. Aktualisiere die Artinformationen und lade Bilder zur Offline-Nutzung herunter.";
-                        HintButtonText = "Aktualisierung öffnen";
+                        if (!ImagesLoaded)
+                        {
+                            ActionNecessary = true;
+                            //_hintPage = new UpdateData();
+                            _hintPageAsString = "UpdateData";
+                            HintLabelText = "Aktualisiere die Artinformationen und lade Bilder zur Offline-Nutzung herunter.";
+                            HintButtonText = "Aktualisierung öffnen";
+                        }
+                        else if (!ImagesUpdated)
+                        {
+                            ActionNecessary = true;
+                            //_hintPage = new UpdateData();
+                            _hintPageAsString = "UpdateData";
+                            HintLabelText = "Neue Daten stehen zur Verfügung. Aktualisiere die Artinformationen und lade Bilder zur Offline-Nutzung herunter.";
+                            HintButtonText = "Aktualisierung öffnen";
+                        }
+                        else
+                        {
+                            CheckForJsonUpdates();
+                        }
                     }
                 }
                 else if (statusStorage != PermissionStatus.Unknown)
@@ -197,6 +225,34 @@ namespace KBS.App.TaxonFinder.ViewModels
                 Debug.WriteLine(ex.Message);
             }
             return registered;
+        }
+
+        public async void CheckForTutorial()
+        {
+            string dontShowTutorial = Preferences.Get("dontShowTutorialOnStartup", "false");
+            if (String.IsNullOrEmpty(dontShowTutorial) || dontShowTutorial == "false")
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new Tutorial());
+            }
+        }
+
+        public async void CheckForJsonUpdates()
+        {
+            try
+            {
+                var updateResult = await UpdateDataViewModel.CheckForUpdates();
+                if(updateResult != "Alle Daten sind aktuell")
+                {
+                    ActionNecessary = true;
+                    _hintPageAsString = "UpdateData";
+                    HintButtonText = "Aktualisierung öffnen";
+                    HintLabelText = updateResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         #endregion

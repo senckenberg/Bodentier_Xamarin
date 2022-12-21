@@ -2,7 +2,6 @@
 using KBS.App.TaxonFinder.Models;
 using KBS.App.TaxonFinder.Services;
 using KBS.App.TaxonFinder.Views;
-using Plugin.FilePicker;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using Plugin.Permissions;
@@ -17,9 +16,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using static KBS.App.TaxonFinder.Data.PositionInfo;
 using Maps = Xamarin.Forms.Maps;
+using PermissionStatus = Plugin.Permissions.Abstractions.PermissionStatus;
 
 namespace KBS.App.TaxonFinder.ViewModels
 {
@@ -34,6 +35,7 @@ namespace KBS.App.TaxonFinder.ViewModels
         private string _result;
         private RecordModel _selectedRecord;
         private List<MediaFileModel> _mediaToDelete;
+        public List<Taxon> TaxonPickerItemsSource;
 
         #endregion
 
@@ -93,11 +95,13 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                 IsEditable = true;
                 CreationDate = _selectedRecord.CreationDate;
-                Identifier = Guid.NewGuid();
+                Identifier = Guid.NewGuid().ToString();
                 RecordDate = _selectedRecord.RecordDate;
                 HabitatName = _selectedRecord.HabitatName;
-                ReportedByName = _selectedRecord.ReportedByName;
-                HabitatDescription = _selectedRecord.HabitatDescription;
+                //client request 2022-02-03
+                //HabitatDescription = _selectedRecord.HabitatDescription;
+                HabitatDescription = "";
+                HabitatDescriptionForEvent = "";
                 ReportedByName = _selectedRecord.ReportedByName;
                 Latitude = _selectedRecord.Latitude;
                 Longitude = _selectedRecord.Longitude;
@@ -112,6 +116,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 OnPropertyChanged(nameof(RecordDate));
                 OnPropertyChanged(nameof(HabitatName));
                 OnPropertyChanged(nameof(HabitatDescription));
+                OnPropertyChanged(nameof(HabitatDescriptionForEvent));
                 OnPropertyChanged(nameof(ReportedByName));
                 OnPropertyChanged(nameof(Latitude));
                 OnPropertyChanged(nameof(Longitude));
@@ -119,6 +124,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                 OnPropertyChanged(nameof(Accuracy));
                 OnPropertyChanged(nameof(IsEditable));
                 OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(MaleCount));
+                OnPropertyChanged(nameof(FemaleCount));
             }
         }
 
@@ -158,6 +165,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                 RecordDate = _selectedRecord.RecordDate;
                 HabitatName = _selectedRecord.HabitatName;
                 HabitatDescription = _selectedRecord.HabitatDescription;
+                HabitatDescriptionForEvent = _selectedRecord.HabitatDescriptionForEvent;
+                DiagnosisTypeId = _selectedRecord.DiagnosisTypeId;
                 Latitude = _selectedRecord.Latitude;
                 Longitude = _selectedRecord.Longitude;
                 Height = _selectedRecord.Height;
@@ -166,16 +175,22 @@ namespace KBS.App.TaxonFinder.ViewModels
                 TotalCount = _selectedRecord.TotalCount;
                 MaleCount = _selectedRecord.MaleCount;
                 FemaleCount = _selectedRecord.FemaleCount;
+                ReportedByName = _selectedRecord.ReportedByName;
 
+                OnPropertyChanged(nameof(ReportedByName));
                 OnPropertyChanged(nameof(CreationDate));
                 OnPropertyChanged(nameof(RecordDate));
                 OnPropertyChanged(nameof(HabitatName));
                 OnPropertyChanged(nameof(HabitatDescription));
+                OnPropertyChanged(nameof(HabitatDescriptionForEvent));
                 OnPropertyChanged(nameof(Latitude));
                 OnPropertyChanged(nameof(Longitude));
                 OnPropertyChanged(nameof(Height));
                 OnPropertyChanged(nameof(Accuracy));
                 OnPropertyChanged(nameof(IsEditable));
+                OnPropertyChanged(nameof(DiagnosisTypeId));
+                OnPropertyChanged(nameof(FemaleCount));
+                OnPropertyChanged(nameof(MaleCount));
                 OnPropertyChanged(nameof(TotalCount));
             }
         }
@@ -195,6 +210,7 @@ namespace KBS.App.TaxonFinder.ViewModels
         #region Constructor
         public RecordEditViewModel() : base()
         {
+            TaxonPickerItemsSource = new List<Taxon>();
             TakePhotoCommand = new Command(async () => await TakePhoto());
             SelectPhotoCommand = new Command(async () => await SelectPhoto());
             RemoveMediaCommand = new Command<MediaFileModel>(async arg => await RemoveMedia(arg));
@@ -221,7 +237,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             {
                 var statusCamera = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Camera);
                 var statusStorage = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
-                if (statusCamera != PermissionStatus.Granted)
+                if (statusCamera != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
                 {
                     if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Camera))
                     {
@@ -232,7 +248,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                     statusCamera = results[Permission.Camera];
                 }
 
-                if (statusStorage != PermissionStatus.Granted)
+                if (statusStorage != Plugin.Permissions.Abstractions.PermissionStatus.Granted)
                 {
                     if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Storage))
                     {
@@ -255,7 +271,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                     if (file != null)
                     {
-                        SelectedMedia.Add(new MediaFileModel(file.Path, LocalRecordId,MediaFileModel.MediaType.Image));
+                        SelectedMedia.Add(new MediaFileModel(file.Path, LocalRecordId, MediaFileModel.MediaType.Image));
                         SetMediaHeight();
                     }
                 }
@@ -368,24 +384,25 @@ namespace KBS.App.TaxonFinder.ViewModels
         public ICommand SaveRecordCommand { get; set; }
         private async Task SaveRecord()
         {
-            if (!String.IsNullOrEmpty(HabitatName) && TotalCount > 0 &&
+            string result;
+
+            if ((!String.IsNullOrEmpty(HabitatName) && TotalCount > 0 &&
             (Position == PositionOption.Pin && Latitude != 0 && Longitude != 0) ||
             (Position != PositionOption.Pin && PositionList.Count != 0)
-            && !String.IsNullOrEmpty(ReportedByName))
+            && !String.IsNullOrEmpty(ReportedByName)) && TaxonId >= -1 && !string.IsNullOrEmpty(HabitatDescription))
             {
-                foreach (var media in _mediaToDelete)
-                {
-                    if (media != null)
-                        await Database.DeleteMedia(media);
-                }
+                Taxon tempTax = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(TaxonId));
+
                 var recordModel = new RecordModel
                 {
                     TaxonId = TaxonId,
                     CreationDate = DateTime.Now,
-                    Identifier = Identifier == Guid.Empty ? Guid.NewGuid() : Identifier,
+                    Identifier = String.IsNullOrEmpty(Identifier) ? Guid.NewGuid().ToString() : Identifier,
+                    IsSynced = false,
                     RecordDate = RecordDate,
                     HabitatName = HabitatName,
                     HabitatDescription = HabitatDescription,
+                    HabitatDescriptionForEvent = HabitatDescriptionForEvent,
                     Latitude = Latitude,
                     Longitude = Longitude,
                     Height = Height,
@@ -396,10 +413,39 @@ namespace KBS.App.TaxonFinder.ViewModels
                     FemaleCount = FemaleCount,
                     IsEditable = IsEditable,
                     ReportedByName = ReportedByName,
+                    ApprovalStateId = 1,
+                    AccuracyTypeId = 1,
+                    DiagnosisTypeId = DiagnosisTypeId,
                 };
+
+                if (tempTax != null)
+                {
+                    tempTax.Identifier.ToString();
+                    TaxonName = tempTax.TaxonName;
+                }
+
+                if (DiagnosisTypeId != null)
+                {
+                    if (DiagnosisTypeId > 0)
+                    {
+                        recordModel.DiagnosisTypeId = DiagnosisTypeId;
+                    }
+                }
+
+
+                foreach (var media in _mediaToDelete)
+                {
+                    if (media != null)
+                    {
+                        await Database.DeleteMedia(media);
+                        recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
+                    }
+
+                }
 
                 if (ExistingRecord)
                 {
+                    recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
                     recordModel.LocalRecordId = this.LocalRecordId;
                     await Database.UpdateRecord(recordModel);
                     var positionsToDelete = await Database.GetPositionAsync(recordModel.LocalRecordId);
@@ -410,6 +456,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 }
                 else
                 {
+                    recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
                     await Database.SaveRecord(recordModel);
                 }
 
@@ -434,9 +481,10 @@ namespace KBS.App.TaxonFinder.ViewModels
                     {
                         media.LocalRecordId = recordModel.LocalRecordId;
                         await Database.SaveMedia(media);
+                        recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
                     }
                 }
-                string result;
+
                 if (SaveAsTemplate)
                 {
                     if (ExistingRecord)
@@ -462,15 +510,15 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                             if (result == "true")
                             {
-                                Database.SetSynced(_selectedRecord.LocalRecordId);
-                                IsEditable = false;
-                                result = "Fundmeldung synchronisiert";
+                                //Database.SetSynced(_selectedRecord.LocalRecordId);
+                                //IsEditable = false;
+                                result = "Änderungen gespeichert";
                             }
                         }
                         else
                         {
                             IsBusy = false;
-                            throw new System.UnauthorizedAccessException("Unautorized");
+                            throw new System.UnauthorizedAccessException("Unauthorized");
                         }
 
                     }
@@ -494,6 +542,9 @@ namespace KBS.App.TaxonFinder.ViewModels
                 {
                     App.Current.MainPage.Navigation.RemovePage(existingPages[i]);
                 };
+            } else
+            {
+                await Application.Current.MainPage.DisplayAlert("Speichern nicht möglich", "Bitte prüfe die Eingaben", "Okay");
             }
 
         }
@@ -523,7 +574,14 @@ namespace KBS.App.TaxonFinder.ViewModels
 
             if (ExistingRecord)
             {
-                await Database.DeleteRecord(await Database.GetRecordAsync(this.LocalRecordId));
+                if (this.IsSynced)
+                {
+                    Database.SetRecordDeletionDate(await Database.GetRecordAsync(this.LocalRecordId));
+                }
+                else
+                {
+                    await Database.DeleteRecord(await Database.GetRecordAsync(this.LocalRecordId));
+                }
                 await App.Current.MainPage.Navigation.PushAsync(new RecordList("Fundmeldung gelöscht"));
                 var existingPages = App.Current.MainPage.Navigation.NavigationStack.ToList();
                 for (int i = 1; i < existingPages.Count - 1; i++)
@@ -569,7 +627,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 statusStorage = results[Permission.Storage];
             }
 
-            if (statusStorage == PermissionStatus.Granted)
+            if (statusStorage == Plugin.Permissions.Abstractions.PermissionStatus.Granted)
             {
                 var allowedType = new string[1];
                 switch (Device.RuntimePlatform)
@@ -583,12 +641,13 @@ namespace KBS.App.TaxonFinder.ViewModels
                     default:
                         break;
                 }
-                var fileData = await CrossFilePicker.Current.PickFile(allowedType);
+
+                var fileData = await FilePicker.PickAsync(PickOptions.Default);
                 if (fileData == null)
                     return; // user canceled file picking
                 var fileHelper = DependencyService.Get<IFileHelper>();
-                var file = fileHelper.CopyFileToApp(fileData.FilePath);
-                SelectedMedia.Add(new MediaFileModel(file.Path, LocalRecordId,MediaFileModel.MediaType.Audio));
+                var file = fileHelper.CopyFileToApp(fileData.FullPath);
+                SelectedMedia.Add(new MediaFileModel(file.Path, LocalRecordId, MediaFileModel.MediaType.Audio));
                 SetMediaHeight();
             }
         }
@@ -614,10 +673,11 @@ namespace KBS.App.TaxonFinder.ViewModels
             }
             var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(_selectedRecord.TaxonId));
             var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
+
             AdviceJsonItem adviceJsonItem = new AdviceJsonItem
             {
                 AdviceId = _selectedRecord.LocalRecordId,
-                Identifier = _selectedRecord.Identifier,
+                Identifier = Guid.Parse(_selectedRecord.Identifier),
                 TaxonId = _selectedRecord.TaxonId,
                 TaxonFullName = taxonName,
                 AdviceDate = _selectedRecord.RecordDate,
@@ -632,6 +692,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 StatePupa = false,
                 StateDead = false,
                 Comment = _selectedRecord.HabitatDescription,
+                HabitatDescriptionForEvent = _selectedRecord.HabitatDescriptionForEvent,
                 ReportedByName = _selectedRecord.ReportedByName,
                 ImageCopyright = "",
                 ImageLegend = "",
@@ -639,14 +700,165 @@ namespace KBS.App.TaxonFinder.ViewModels
                 Lat = _selectedRecord.Position == PositionOption.Pin ? (decimal)_selectedRecord.Latitude : (decimal)RecordEdit.GetCenterOfPositions(PositionList).Latitude,
                 Lon = _selectedRecord.Position == PositionOption.Pin ? (decimal)_selectedRecord.Longitude : (decimal)RecordEdit.GetCenterOfPositions(PositionList).Longitude,
                 //AreaWkt = _selectedRecord.Position != PositionOption.Pin ? ConvertPositionListToWkt(_selectedRecord.Position, PositionList) : "",
-                Zoom = _selectedRecord.Height != null ? (int)_selectedRecord.Height : 1,
                 AccuracyType = 1,
+                DiagnosisTypeId = _selectedRecord.DiagnosisTypeId,
                 DeviceId = DependencyService.Get<IDeviceId>().GetDeviceId(),
                 DeviceHash = Database.GetRegister().Result.DeviceHash,
                 LocalityTemplateId = 0,
                 Images = baseList.ToArray()
             };
             return adviceJsonItem;
+        }
+
+        public void UpdateReportedByName()
+        {
+            if (Database.GetRegister() != null)
+            {
+                ReportedByName = Database.GetUserFullName();
+                OnPropertyChanged(nameof(ReportedByName));
+            }
+        }
+
+        public AdviceJsonItemSync ConvertToJsonForSync(RecordModel rm)
+        {
+            try
+            {
+                string baseString;
+                List<AdviceImageJsonItem> baseList = new List<AdviceImageJsonItem>();
+                List<AdviceImageJsonItem> audioList = new List<AdviceImageJsonItem>();
+                var fileHelper = DependencyService.Get<IFileHelper>();
+                List<MediaFileModel> selectedMedia = Database.GetMediaAsync(rm.LocalRecordId).Result;
+                string userName = Database.GetUserName();
+                foreach (MediaFileModel media in selectedMedia)
+                {
+                    try
+                    {
+                        baseString = fileHelper.GetBase64FromImagePath(media.Path);
+                        baseList.Add(new AdviceImageJsonItem(baseString, media.Path));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Database.DeleteMedia(media);
+                        var dbg1 = ex;
+                        Trace.WriteLine(ex);
+                    }
+                }
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(rm.TaxonId));
+
+                if (tempTaxon == null)
+                {
+                    tempTaxon = new Taxon { TaxonId = 0, TaxonName = "Unbekannte Art", Identifier = Guid.Empty };
+                }
+
+                AdviceJsonItemSync adviceJsonItem = new AdviceJsonItemSync
+                {
+                    GlobalAdviceId = rm.GlobalAdviceId,
+                    Identifier = Guid.Parse(rm.Identifier),
+                    TaxonId = rm.TaxonId,
+                    TaxonFullName = tempTaxon.TaxonName,
+                    TaxonGuid = tempTaxon.Identifier,
+                    AdviceDate = rm.RecordDate,
+                    AdviceCount = rm.TotalCount,
+                    AdviceCity = rm.HabitatName,
+                    MaleCount = rm.MaleCount,
+                    FemaleCount = rm.FemaleCount,
+                    StateEgg = false,
+                    StateLarva = false,
+                    StateImago = true,
+                    StateNymph = false,
+                    StatePupa = false,
+                    StateDead = false,
+                    DiagnosisTypeId = rm.DiagnosisTypeId != null ? rm.DiagnosisTypeId.Value : -1,
+                    Comment = rm.HabitatDescription,
+                    HabitatDescriptionForEvent = rm.HabitatDescriptionForEvent,
+                    ReportedByName = rm.ReportedByName,
+                    LastEditDate = TruncateDateTime(rm.LastEdit, TimeSpan.FromSeconds(1)),
+                    DeletionDate = rm.DeletionDate,
+                    ImageCopyright = rm.ImageCopyright,
+                    ImageLegend = rm.ImageLegend,
+                    ApprovalStateId = rm.ApprovalStateId,
+                    //decimal.Round(yourValue, 2, MidpointRounding.AwayFromZero);
+                    Lat = rm.Position == PositionOption.Pin ? Decimal.Parse(rm.Latitude.ToString().Replace(',', '.'), CultureInfo.InvariantCulture).ToString("0.000000").Replace('.', ',') : Math.Round((decimal)RecordEdit.GetCenterOfPositions(PositionList).Latitude, 6, MidpointRounding.AwayFromZero).ToString("N6"),
+                    Lon = rm.Position == PositionOption.Pin ? Math.Round((decimal)rm.Longitude, 6, MidpointRounding.AwayFromZero).ToString("0.000000").Replace('.', ',') : Math.Round((decimal)RecordEdit.GetCenterOfPositions(PositionList).Longitude, 6, MidpointRounding.AwayFromZero).ToString("N6"),
+                    AccuracyTypeId = rm.AccuracyTypeId,
+                    LocalityTemplateId = rm.LocalityTemplateId,
+                    Images = baseList.ToList(),
+                    IsSynced = rm.IsSynced,
+                    UserName = userName
+                };
+
+                //adviceJsonItem.GenerateItemHash();
+                adviceJsonItem.GenerateItemHashV2();
+
+                return adviceJsonItem;
+            }
+            catch (Exception ex)
+            {
+                var dbg = ex;
+                Trace.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public RecordModel ConvertToRecordModel(AdviceJsonItemSync ajis)
+        {
+            try
+            {
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(ajis.TaxonId));
+                var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
+
+                RecordModel rm = new RecordModel
+                {
+                    GlobalAdviceId = ajis.GlobalAdviceId,
+                    Identifier = ajis.Identifier.ToString(),
+                    TaxonId = ajis.TaxonId,
+                    TaxonGuid = ajis.TaxonGuid.ToString(),
+                    RecordDate = (DateTime)ajis.AdviceDate,
+                    TotalCount = (int)ajis.AdviceCount,
+                    HabitatName = ajis.AdviceCity,
+                    MaleCount = (int)ajis.MaleCount,
+                    FemaleCount = (int)ajis.FemaleCount,
+                    StateEgg = ajis.StateEgg,
+                    StateLarva = ajis.StateLarva,
+                    StateImago = ajis.StateImago,
+                    StateNymph = ajis.StateNymph,
+                    StatePupa = ajis.StatePupa,
+                    StateDead = ajis.StateDead,
+                    HabitatDescription = ajis.Comment,
+                    HabitatDescriptionForEvent = ajis.HabitatDescriptionForEvent,
+                    DiagnosisTypeId = ajis.DiagnosisTypeId,
+                    ReportedByName = ajis.ReportedByName,
+                    LastEdit = TruncateDateTime(ajis.LastEditDate, TimeSpan.FromSeconds(1)),
+                    DeletionDate = ajis.DeletionDate,
+                    ImageCopyright = ajis.ImageCopyright,
+                    ImageLegend = ajis.ImageLegend,
+                    Latitude = Double.Parse(ajis.Lat.ToString()),
+                    Longitude = Double.Parse(ajis.Lon.ToString()),
+                    AccuracyTypeId = ajis.AccuracyTypeId,
+                    LocalityTemplateId = ajis.LocalityTemplateId,
+                    IsSynced = ajis.IsSynced,
+                    UserName = ajis.UserName,
+                    ApprovalStateId = ajis.ApprovalStateId,
+                };
+
+                var fileHelper = DependencyService.Get<IFileHelper>();
+
+                foreach (AdviceImageJsonItem imageItem in ajis.Images)
+                {
+                    byte[] imageBytes = fileHelper.GetBytesFromBase64String(imageItem.ImageBase64);
+                    fileHelper.CopyFileToLocal(imageBytes, imageItem.ImageName);
+                    MediaFileModel media = new MediaFileModel(imageItem.ImageName, rm.LocalRecordId, MediaFileModel.MediaType.Image);
+                    Database.SaveMedia(media);
+                }
+                return rm;
+            }
+            catch (Exception ex)
+            {
+                var dbg = ex;
+                Trace.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         /// <summary>
@@ -664,6 +876,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             }
             return areaWkt.TrimEnd(',') + ((positionOption == PositionOption.Area) ? "))" : ")");
         }
+
         /// <summary>
         /// Sets the height of the media section based on the number of files.
         /// </summary>
@@ -672,6 +885,22 @@ namespace KBS.App.TaxonFinder.ViewModels
             MediaHeight = SelectedMedia.Count * 45;
             if (MediaHeight < 150) { MediaHeight = 150; }
             OnPropertyChanged(nameof(MediaHeight));
+        }
+
+        public static DateTime? TruncateDateTime(DateTime? dateTime, TimeSpan timeSpan)
+        {
+            if (dateTime != null)
+            {
+                if (TimeZoneInfo.Local.Id == "GMT")
+                {
+                    dateTime = dateTime.Value.AddHours(2);
+                }
+
+                if (timeSpan == TimeSpan.Zero) return dateTime; // Or could throw an ArgumentException
+                if (dateTime == DateTime.MinValue || dateTime == DateTime.MaxValue) return dateTime; // do not modify "guard" values
+                return ((DateTime)dateTime).AddTicks(-(((DateTime)dateTime).Ticks % timeSpan.Ticks));
+            }
+            return null;
         }
 
         public async void AddAudio()
@@ -685,6 +914,28 @@ namespace KBS.App.TaxonFinder.ViewModels
             }
         }
 
+        public async Task<List<Taxon>> SetTaxonPickerItemsSource()
+        {
+            //List<Taxon> _taxonPickerItemsSource = await Database.GetAllTaxaAsync();
+            List<Taxon> _taxonPickerItemsSource = new List<Taxon>();
+            _taxonPickerItemsSource.Add(new Taxon { TaxonId = 0, TaxonName = "Unbekannte Art" });
+            _taxonPickerItemsSource.AddRange(((App)App.Current).Taxa.Where(t => t.TaxonomyStateName == "sp.").ToList());
+            return _taxonPickerItemsSource;
+        }
+
+        public async Task<List<DiagnosisTypeModel>> SetDiagnosisTypeItemsSource()
+        {
+            List<DiagnosisTypeModel> _diagnosisTypePickerItemsSource = new List<DiagnosisTypeModel>();
+            _diagnosisTypePickerItemsSource.Add(new DiagnosisTypeModel { Id = -1, Name = "keine Auswahl" });
+            //_taxonPickerItemsSource.AddRange(((App)App.Current).Taxa.Where(t => t.TaxonomyStateName == "sp.").ToList());
+            return _diagnosisTypePickerItemsSource;
+        }
         #endregion
+    }
+
+    public class DiagnosisTypeModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

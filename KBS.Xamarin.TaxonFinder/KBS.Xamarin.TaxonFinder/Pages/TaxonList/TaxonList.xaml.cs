@@ -29,7 +29,9 @@ namespace KBS.App.TaxonFinder.Views
 		{
 			InitializeComponent();
 			TaxonListViewModel.NewRecord = newRecord;
+			//OnPropertyChanged(nameof(TaxonListViewModel.NewRecord));
 			CurrentTaxonList.CollapseAllGroups();
+			//CurrentTaxonList.SelectedTaxonList.Add(new TaxonListGroup { "Unbekannte Art", "Unbekannte Art" });
 		}
 
 		public TaxonList(int localRecordId)
@@ -74,6 +76,18 @@ namespace KBS.App.TaxonFinder.Views
 		private void Switchgroupingbutton_collapse_clicked(object sender, EventArgs e)
 		{
 			CurrentTaxonList.CollapseAllGroups();
+		}
+
+		private void UnknownSpeciesButton_Clicked (object sender, EventArgs e)
+		{
+			if (TaxonListViewModel.LocalRecordIdCopy.HasValue)
+			{
+				Navigation.PushAsync(new RecordEdit((int)(TaxonListViewModel).LocalRecordIdCopy, -1, true));
+			}
+			else if (TaxonListViewModel.NewRecord)
+			{
+				Navigation.PushAsync(new RecordEdit(-1));
+			}			
 		}
 
 		private void Switchgroupingbutton_expand_clicked(object sender, EventArgs e)

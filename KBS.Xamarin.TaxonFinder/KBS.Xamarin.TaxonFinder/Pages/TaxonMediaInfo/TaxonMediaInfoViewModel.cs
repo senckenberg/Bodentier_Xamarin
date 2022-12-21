@@ -19,7 +19,13 @@ namespace KBS.App.TaxonFinder.ViewModels
 
         private TaxonImage _selectedMedia;
 
+        double currentScale = 1;
+        double startScale = 1;
+        double xOffset = 0;
+        double yOffset = 0;
+
         #endregion
+
 
         #region Properties
         public int SelectedMediaId
@@ -65,12 +71,65 @@ namespace KBS.App.TaxonFinder.ViewModels
         }
         #endregion
 
+        #region constructor
+        public TaxonMediaInfoViewModel()
+        {
+            TapAddCommand = new Command<string>(async arg => await TapAdd(arg));
+            OnPinchUpdatedCommand = new Command<Xamarin.Forms.PinchGestureUpdatedEventArgs>(async arg => await OnPinchUpdatedC(arg));
+        }
+        #endregion
+
         #region Events
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #region TapAdd Command
+        public ICommand TapAddCommand { get; set; }
+        private async Task TapAdd(string localName)
+        {
+            Trace.WriteLine(localName);
+            //await Xamarin.Essentials.Launcher.OpenAsync(new Uri($"https://bodentierhochvier.de/erfassen/funde"));
+        }
+        #endregion
+
+
+        #region TapAdd Command
+        public ICommand OnPinchUpdatedCommand { get; set; }
+        private async Task OnPinchUpdatedC(Xamarin.Forms.PinchGestureUpdatedEventArgs e)
+        {
+            Trace.WriteLine(e.ToString());
+            //await Xamarin.Essentials.Launcher.OpenAsync(new Uri($"https://bodentierhochvier.de/erfassen/funde"));
+        }
+        #endregion
+
+        private void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
+        {
+            /*
+            switch (e.Status)
+            {
+                case GestureStatus.Started:
+                    StartScale = Scale;
+                    AnchorX = e.ScaleOrigin.X;
+                    AnchorY = e.ScaleOrigin.Y;
+                    break;
+
+                case GestureStatus.Running:
+                    double current = Scale + (e.Scale - 1) * StartScale;
+                    Scale = Clamp(current, MIN_SCALE * (1 - OVERSHOOT), MAX_SCALE * (1 + OVERSHOOT));
+                    break;
+
+                case GestureStatus.Completed:
+                    if (Scale > MAX_SCALE)
+                        this.ScaleTo(MAX_SCALE, 250, Easing.SpringOut);
+                    else if (Scale < MIN_SCALE)
+                        this.ScaleTo(MIN_SCALE, 250, Easing.SpringOut);
+                    break;
+            }
+            */
         }
 
         #endregion

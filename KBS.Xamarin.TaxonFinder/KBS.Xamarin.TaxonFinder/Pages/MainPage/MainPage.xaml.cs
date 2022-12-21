@@ -57,6 +57,7 @@ namespace KBS.App.TaxonFinder.Views
 			{
 				bool registered = await ((MainPageViewModel)BindingContext).GetHint();
 				RegisterButton.Text = registered ? "Abmeldung" : "Anmeldung";
+				((MainPageViewModel)BindingContext).CheckForTutorial();
 			}
 			catch (Exception ex)
 			{
@@ -67,6 +68,11 @@ namespace KBS.App.TaxonFinder.Views
 		private void Feedback_Clicked(object sender, EventArgs e)
 		{
 			Navigation.PushAsync(new Feedback());
+		}
+
+		private void Tutorial_Clicked(object sender, EventArgs e)
+		{
+			Navigation.PushAsync(new Tutorial());
 		}
 
 		private void Help_Clicked(object sender, EventArgs e)

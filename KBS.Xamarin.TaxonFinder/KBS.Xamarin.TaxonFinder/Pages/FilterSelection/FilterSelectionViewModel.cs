@@ -1,6 +1,7 @@
 ﻿using KBS.App.TaxonFinder.Data;
 using KBS.App.TaxonFinder.Services;
 using KBS.App.TaxonFinder.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,9 +28,12 @@ namespace KBS.App.TaxonFinder.ViewModels
         public List<int> _tagCategoryFilterIds;
         public List<int> _taxonIds;
         private FilterItem _currentItem;
+        private bool _init = true;
         #endregion
 
-        private Dictionary<string, string> orderToUrlList = new Dictionary<string, string>(){
+        public List<App.OrderSelectionDictionary> orderToUrlList;
+        /* loaded from file
+         * = new Dictionary<string, string>(){
             {"Bodentiere", "bestimmung-bodentiere"},
             {"Doppelfüßer (Diplopoda)", "bestimmung-doppelfuesser"},
             {"Samenfüßer (Chordeumatida)", "bestimmung-doppelfuesser"},
@@ -45,6 +49,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             {"Spinnenläufer (Scutigeromorpha)", "bestimmung-hunderfuesser-neu" },
             {"Asseln (Isopoda)", "bestimmung-landasseln" }
         };
+        */
 
 
         #region Properties
@@ -66,8 +71,10 @@ namespace KBS.App.TaxonFinder.ViewModels
 
         private List<int> GetTaxonIdsForValue(FilterItem fItem, int sliderValue)
         {
-            var taxa = ((App)App.Current).Taxa;
-            var taxIds = taxa.Select(t => t.TaxonId).ToList();
+            //var taxa = ((App)App.Current).Taxa;
+            //var taxIds = taxa.Select(t => t.TaxonId).ToList();
+
+            _taxonIds = FindTaxonIdsByFilterGroupName(_filterTagGroupName);
             var taxonFilteredIds_temp = fItem.SubOptions.Where(fi => (fi.MaxValue >= sliderValue) && (fi.MinValue <= sliderValue)).Select(fi => fi.TaxonId).ToList();
             return taxonFilteredIds_temp;
         }
@@ -86,6 +93,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                     _currentItem.BaseItem.ValueFilterDictionary.Add(fItemId, GetTaxonIdsForValue(_currentItem, sliderValue));
                 }
                 OnPropertyChanged(nameof(SelectedTaxonList));
+                OnPropertyChanged(nameof(SelectedTaxonCount));
             }
             catch (Exception e)
             {
@@ -257,6 +265,11 @@ namespace KBS.App.TaxonFinder.ViewModels
                             FilterItems.Add(opt);
                         }
                     }
+
+                    CategoryItems = new ObservableCollection<FilterItem>(CategoryItems.OrderByDescending(ci => ci.VisibilityCategoryId).ThenBy(ci => ci.OrderPriority));
+
+                    OnPropertyChanged(nameof(CategoryItems));
+
                     OnPropertyChanged(nameof(CurrentItemText));
                     OnPropertyChanged(nameof(ShowCatUpCommand));
                     OnPropertyChanged(nameof(ShowCategoryList));
@@ -266,6 +279,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                     OnPropertyChanged(nameof(IsNotValueDataType));
                     OnPropertyChanged(nameof(IsValueDataType));
                     OnPropertyChanged(nameof(SliderValue));
+                    _init = false;
                 }
             }
         }
@@ -316,7 +330,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                     CategoryItems.Clear();
                     FilterItems.Clear();
-                    _currentItem.BaseItem.ValueFilterDictionary?.Clear();
+                    //_currentItem.BaseItem.ValueFilterDictionary?.Clear();
 
                 }
 
@@ -332,6 +346,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                         FilterItems.Add(opt);
                     }
                 }
+
                 OnPropertyChanged(nameof(CurrentItemText));
                 OnPropertyChanged(nameof(ShowCatUpCommand));
                 OnPropertyChanged(nameof(ShowCategoryList));
@@ -362,13 +377,22 @@ namespace KBS.App.TaxonFinder.ViewModels
             {
                 if (_currentItem != null)
                 {
+                    EnableReset = _currentItem.BaseItem.SelectedItems.Count != 0 || _currentItem.BaseItem.ValueFilterDictionary.Count != 0;
+                    OnPropertyChanged(nameof(EnableReset));
+                }
+                return SelectedTaxonList.Count().ToString();
+                /*
+                if (_currentItem != null)
+                {
                     EnableReset = _currentItem.BaseItem.SelectedItems.Count != 0;
                     OnPropertyChanged(nameof(EnableReset));
                     //EnableReset = _currentItem.BaseItem.HasSelectedItems;
                 }
-                var result = _currentItem == null || !ShowSelectedOnly ? "" : string.Format("{0}", _currentItem.BaseItem.MatchingTaxonCount(_taxonIds));
+                var taxonIds = FindTaxonIdsByFilterGroupName(_filterTagGroupName);
+                var result = _currentItem == null || !ShowSelectedOnly ? "" : string.Format("{0}", _currentItem.BaseItem.MatchingTaxonCount(taxonIds, _init));
                 return result;
                 //return _currentItem == null || !ShowAllTaxa ? "" : string.Format("{0} Taxa", _currentItem.BaseItem.MatchingTaxonCount.ToString());             
+                **/
             }
         }
 
@@ -399,11 +423,26 @@ namespace KBS.App.TaxonFinder.ViewModels
         {
             get
             {
+                var taxonIds = ((App)App.Current).Taxa.Distinct().Select(t => t.TaxonId).ToList();
+
+                if (!String.IsNullOrEmpty(_filterTagGroupName))
+                {
+                    taxonIds = FindTaxonIdsByFilterGroupName(_filterTagGroupName);
+                }
+
                 if (_currentItem != null)
                 {
+                    var taxa = ((App)App.Current).Taxa.Where(tx => taxonIds.Distinct().Contains(tx.TaxonId)).Distinct();
+                    var matching = ShowSelectedOnly ? _currentItem.BaseItem.MatchingTaxonByExclusion(taxonIds) : _currentItem.BaseItem.MatchingTaxonByRelevance(taxonIds);
 
-                    var taxa = ((App)App.Current).Taxa.Where(tx => _taxonIds.Contains(tx.TaxonId));
-                    var matching = ShowSelectedOnly ? _currentItem.BaseItem.MatchingTaxonByExclusion(_taxonIds) : _currentItem.BaseItem.MatchingTaxonByRelevance(_taxonIds);
+                    List<int> vD_TaxonIds;
+                    
+                    if (_currentItem.BaseItem.ValueFilterDictionary.Count > 0)
+                    {
+                        vD_TaxonIds = _currentItem.BaseItem.ValueFilterDictionary.SelectMany(item => item.Value).ToList();
+                        List<int> res = taxa.Select(t => t.TaxonId).ToList().Intersect(vD_TaxonIds).ToList();
+                        matching = (List<TaxonSearchResult>)matching.Where(m => res.Contains(m.TaxonId)).ToList();
+                    }
 
                     var q = (from t in taxa join s in matching on t.TaxonKey equals s.TaxonKey orderby s.Weight descending select t).ToList();
 
@@ -413,16 +452,16 @@ namespace KBS.App.TaxonFinder.ViewModels
                         //q[i].ShowAll = !ShowAllTaxa;
                         q[i].ShowAll = !ShowSelectedOnly;
                     }
+
                     EnableHide = (q.Count != 0);
-                    return q.ToList();
+                    return q.Distinct().ToList();
                 }
-                List<Taxon> allTaxa = ((App)App.Current).Taxa.ToList();
-                if (_taxonIds != null)
+                else if (taxonIds.Count > 0)
                 {
-                    allTaxa = ((App)App.Current).Taxa.Where(tax => _taxonIds.Contains(tax.TaxonId)).ToList();
+                    var allTaxa = ((App)App.Current).Taxa.Where(tax => taxonIds.Contains(tax.TaxonId)).ToList();
+                    return allTaxa;
                 }
-                return allTaxa;
-                //return new List<Taxon>();
+                return new List<Taxon>();
             }
         }
         public ObservableCollection<FilterItem> FilterItems { get; set; }
@@ -434,6 +473,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
         public FilterSelectionViewModel()
         {
+            orderToUrlList = Load.FromFile<App.OrderSelectionDictionary>("OrderSelectionTaxa.json");
             _taxonIds = new List<int>();
             _tFilterGroups = Load.FromFile<TaxonTagFilterFilterGroup>("TaxonTagFilterFilterGroups.json");
             _sliderValue = 0;
@@ -480,10 +520,8 @@ namespace KBS.App.TaxonFinder.ViewModels
         private async Task NavigateToWeb()
         {
             string slug = "bestimmung-bodentiere";
-            if (orderToUrlList.TryGetValue(FilterTagGroupName, out var _slug))
-            {
-                slug = _slug;
-            }
+
+            slug = orderToUrlList.First(i => i.OrderName == FilterTagGroupName).OrderSlug;
             string uri = $"https://bodentierhochvier.de/erkennen/{slug}";
             await Launcher.OpenAsync(new Uri(uri));
         }
@@ -496,6 +534,7 @@ namespace KBS.App.TaxonFinder.ViewModels
         private void ResetSelectedTaxon()
         {
             _currentItem.clearSelectedItems();
+            _currentItem.BaseItem.ValueFilterDictionary.Clear();
             while (_currentItem != null && _currentItem.ParentItem != null)
                 GotoParent(true);
             EnableReset = false;
@@ -504,6 +543,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                 ShowFilterSelection = true;
                 OnPropertyChanged(nameof(ShowFilterSelection));
             }
+            OnPropertyChanged(nameof(SelectedTaxonList));
+            OnPropertyChanged(nameof(SelectedTaxonCount));
         }
 
         #endregion
@@ -550,5 +591,7 @@ namespace KBS.App.TaxonFinder.ViewModels
         }
 
         #endregion
+
+
     }
 }

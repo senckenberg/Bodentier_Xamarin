@@ -20,6 +20,11 @@ namespace KBS.App.TaxonFinder.Views
             GestureRecognizers.Add(pinchGesture);
         }
 
+        void OnPinchUpdate ()
+        {
+
+        }
+
         void OnPinchUpdated(object sender, PinchGestureUpdatedEventArgs e)
         {
             if (e.Status == GestureStatus.Started)

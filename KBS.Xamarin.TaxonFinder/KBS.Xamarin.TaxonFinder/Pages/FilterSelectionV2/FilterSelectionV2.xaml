@@ -1,0 +1,431 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage Title="{Binding FilterTagGroupName}"
+			 xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 x:Class="KBS.App.TaxonFinder.Views.FilterSelectionV2"
+			 xmlns:mvvm="clr-namespace:KBS.App.TaxonFinder.ViewModels"
+			 xmlns:conv="clr-namespace:KBS.App.TaxonFinder.Converters"
+			 xmlns:dpd="clr-namespace:KBS.App.TaxonFinder.CustomRenderers">
+
+    <ContentPage.BindingContext>
+        <mvvm:FilterSelectionViewModelV2></mvvm:FilterSelectionViewModelV2>
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Hilfe" Order="Primary" Clicked="Help_Clicked" IconImageSource="help.png"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <!-- https://docs.microsoft.com/de-de/xamarin/xamarin-forms/user-interface/layouts/relativelayout -->
+        <RelativeLayout Padding="{StaticResource PagePadding}">
+            <!--TaxonList-->
+            <ListView x:Name="SelectedTaxonListView"
+                      VerticalOptions="Fill"
+                      ItemsSource="{Binding SelectedTaxonList}"
+                      ItemTapped="ListView_ItemTapped"
+                      HasUnevenRows="False"
+                      RowHeight="{OnIdiom 40, Phone=35, Tablet=40, Desktop=40}"
+                      HeightRequest="{Binding ShowFilterSelection, Converter={conv:FilterSelectionToHeightConverter}}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Style="{StaticResource PaddedGrid}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="8*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <!--Image Grid.Column="0" Source="{Binding ListImage}"></-->
+                                <Label Style="{StaticResource FilterSelectionLabel}"
+                                       HorizontalOptions="StartAndExpand"
+                                       Grid.Column="0"
+                                       Text="{Binding LocalName}"></Label>
+                                <Label Style="{StaticResource FilterSelectionLabel}"
+                                       HorizontalOptions="CenterAndExpand"
+                                       Grid.Column="2"
+                                       Text="{Binding AllowTaxonInfoViewIcon}"
+                                       TextColor="{x:StaticResource senck_blue}"></Label>
+                                <!--Button Grid.Column="2" IsVisible="{Binding hasDeterminationLink}" Text="&#10132;" FontSize="Medium" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" TextColor="{x:StaticResource senck_blue}"></Button-->
+                                <!--StackLayout Orientation="Horizontal" Margin="0,-4,0,0">
+									<Label Text="{Binding TaxonName}" FontAttributes="Italic" FontSize="Small" ></Label>
+									<dpd:IconLabel Icon="{Binding TaxonTypeId, Converter={conv:TaxonTypeToIconConverter}}" FontSize="Small"></dpd:IconLabel>
+								</StackLayout -->
+                                <!--StackLayout Grid.Column="2" VerticalOptions="StartAndExpand" IsVisible="{Binding ShowAll}">
+								<dpd:IconLabel Icon="CheckedCheckbox" FontSize="Small"></dpd:IconLabel>
+								<Label Text="{Binding Relevance}" FontAttributes="Bold" FontSize="Small" Margin="0"></Label>
+							</StackLayout-->
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackLayout VerticalOptions="EndAndExpand" Background="{StaticResource notquitewhite}"
+                         RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                         RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4}"
+                         RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                         RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.6}">
+
+                <!--Filter ausblenden-->
+                <Grid RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                      RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                      RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.2}"
+                      MinimumHeightRequest="{OnIdiom 40, Phone=25, Tablet=40, Desktop=40}"
+                      VerticalOptions="End"
+                      x:Name="ButtonGrid"
+                      BackgroundColor="{StaticResource senck_green}"
+                      ColumnSpacing="0"
+                      Padding="3">
+                    <Grid BackgroundColor="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0}"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Button Style="{StaticResource FilterSelectionLabel}"
+                                Margin="0,0,0,0"
+                                WidthRequest="100"
+                                Padding="2,2"
+                                Grid.Column="2"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="6"
+                                HorizontalOptions="FillAndExpand"
+                                VerticalOptions="CenterAndExpand"
+                                Text="{Binding ShowFilterButtonText}"
+                                Command="{Binding ShowSelectedTaxonCommand}"></Button>
+                        <Button Style="{StaticResource FilterSelectionLabel}"
+                                Padding="2,2"
+                                Margin="0,0,0,0"
+                                Grid.Column="7"
+                                Grid.Row="0"
+                                Grid.ColumnSpan="3"
+                                HorizontalOptions="StartAndExpand"
+                                VerticalOptions="CenterAndExpand"
+                                TextColor="{x:StaticResource senck_blue}"
+                                Command="{Binding ShowSelectedTaxonCommand}"
+                                Text="{Binding ShowChevronUpDown}"
+                                FontSize="Small"></Button>
+                    </Grid>
+                </Grid>
+
+                <StackLayout BackgroundColor="{x:StaticResource notquitewhite}"
+                            IsVisible="{Binding ShowFilterSelection}"
+                            VerticalOptions="Start"
+                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                            RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.6}"
+                            >
+ 
+                    <StackLayout HorizontalOptions="FillAndExpand"                                 
+                                 Margin="0,0"
+                                 IsVisible="{Binding ShowFilterSelection}"
+                                 RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                 Padding="0,0,0,0">
+                        <!-- Filter List -->
+                        <!-- DKGs -->
+                        <ListView RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                  CachingStrategy="RecycleElement"
+                                  Margin="0,0,0,0"
+                                  RowHeight="{OnIdiom 40, Phone=40, Tablet=40, Desktop=40}"
+                                  VerticalOptions="End"
+                                  x:Name="CategoryList"
+                                  ItemsSource="{Binding CategoryItems}"
+                                  ItemTapped="CategoryList_ItemTapped"
+                                  IsVisible="{Binding ShowCategoryList}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid Style="{StaticResource PaddedGrid}"
+                                              BackgroundColor="{Binding VisibilityCategoryId, Converter={conv:VisibilityCatToColourConverter}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="8*"></ColumnDefinition>
+                                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Style="{StaticResource FilterSelectionLabel}"
+                                                   TextColor="WhiteSmoke"
+                                                   Grid.Column="0"
+                                                   Text="{Binding OptionText}"
+                                                   HorizontalOptions="StartAndExpand"></Label>
+                                            <Label Style="{StaticResource FilterSelectionLabel}"
+                                                   TextColor="WhiteSmoke"
+                                                   Grid.Column="1"
+                                                   Text="&#x25BC;"
+                                                   HeightRequest="18"
+                                                   HorizontalOptions="CenterAndExpand"></Label>
+                                            <dpd:IconLabel Style="{StaticResource FilterSelectionLabel}"
+                                                           Grid.Column="2"
+                                                           TextColor="White"
+                                                           HorizontalOptions="CenterAndExpand"
+                                                           Icon="{Binding Selected, Converter={conv:BoolToSelectionImageConverter}}"></dpd:IconLabel>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <!--Selected DKG Name and Return Button -->
+                        <StackLayout VerticalOptions="FillAndExpand"
+                                     BackgroundColor="Gray"
+                                     Padding="0,2,0,2"
+                                     Margin="0,0,0,0"
+                                     MinimumHeightRequest="{OnIdiom 50, Phone=30, Tablet=50, Desktop=50}"
+                                     RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.3}"
+                                     IsVisible="{Binding ShowCatUpCommand}">
+                            
+                            <Grid Style="{StaticResource PaddedGrid}" Margin="1"
+                                  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                  BackgroundColor="WhiteSmoke"
+                                  x:Name="CategoryName"
+                                  ColumnSpacing="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="8*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Style="{StaticResource FilterSelectionLabel}"
+                                       Margin="0"
+                                       Grid.Column="0"
+                                       Grid.Row="0"
+                                       Grid.ColumnSpan="2"
+                                       Text="{Binding CurrentItemText}"
+                                       FontAttributes="Bold"
+                                       HorizontalTextAlignment="Start"
+                                       VerticalTextAlignment="Center"
+                                       VerticalOptions="CenterAndExpand"
+                                       HorizontalOptions="StartAndExpand"></Label>
+                                <Button Style="{StaticResource FilterSelectionLabel}"
+                                        BackgroundColor="WhiteSmoke"
+                                        Margin="0,0,0,0"
+                                        Padding="0,0,0,0"
+                                        Grid.Column="2"
+                                        Grid.Row="0"
+                                        HorizontalOptions="Start"
+                                        Text="Weiter"
+                                        Grid.ColumnSpan="2"
+                                        VerticalOptions="CenterAndExpand"
+                                        FontAttributes="Bold"
+                                        x:Name="GoToParentCommandButton"
+                                        TextColor="{x:StaticResource senck_blue}"
+                                        IsVisible="{Binding ShowCatUpCommand}"
+                                        Command="{Binding GotoParentCommand}"></Button>
+                            </Grid>
+                        </StackLayout>
+                        <!-- DKs VALUELIST -->
+                        <StackLayout IsVisible="{Binding ShowFilterList}"
+                                     RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.65}"
+                                     RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.3}">
+                            <ListView HasUnevenRows="True"
+                                      CachingStrategy="RecycleElement"
+                                      ItemTapped="SelectionList_ItemTapped"
+                                      x:Name="SelectionListValuelist"
+                                      RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                      ItemsSource="{Binding FilterItems}"
+                                      IsVisible="{Binding IsNotValueDataType}">
+                                <ListView.ItemTemplate 
+                                        CachingStrategy="RecycleElement"
+                                        IsVisible="{Binding IsNotValueDataType}">
+                                        <DataTemplate>
+                                        <ViewCell>
+                                            <Grid VerticalOptions="StartAndExpand"
+                                                  Margin="1,0,1,2"
+                                                  IsVisible="{Binding IsNotValueDataType}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="8*"></ColumnDefinition>
+                                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="{OnIdiom 45, Phone=50, Tablet=45, Desktop=45}"></RowDefinition>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Label Style="{StaticResource FilterSelectionLabel}"
+                                                       Grid.Row="0"
+                                                       Grid.Column="0"
+                                                       Text="{Binding OptionText}"
+                                                       VerticalTextAlignment="Center"
+                                                       HorizontalOptions="FillAndExpand"
+                                                       HorizontalTextAlignment="Start"
+                                                       VerticalOptions="Center"
+                                                       Margin="15,0,5,0"
+                                                       IsVisible="{Binding IsNotValueDataType}"></Label>
+                                                <dpd:IconLabel Grid.Row="0"
+                                                               Grid.Column="2"
+                                                               Icon="{Binding Selected, Converter={conv:BoolToSelectionImageConverter}}"
+                                                               HorizontalOptions="CenterAndExpand"
+                                                               VerticalTextAlignment="Center"
+                                                               VerticalOptions="FillAndExpand"
+                                                               Margin="0,0,0,0"
+                                                               IsVisible="{Binding IsNotValueDataType}"></dpd:IconLabel>
+                                                <StackLayout IsVisible="{Binding HasImages}"
+                                                             Grid.Row="1"
+                                                             Grid.Column="0"
+                                                             Grid.ColumnSpan="3">
+                                                    <CarouselView HeightRequest="100"
+                                                                  x:Name="cView"
+                                                                  ItemsSource="{Binding Images}"
+                                                                  VerticalOptions="FillAndExpand"
+                                                                  PeekAreaInsets="{OnIdiom '120', Phone='120', Tablet='275'}">
+                                                        <CarouselView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <StackLayout>
+                                                                    <Frame HasShadow="True"
+                                                                           BorderColor="Transparent"
+                                                                           BackgroundColor="Transparent"
+                                                                           CornerRadius="0"
+                                                                           Margin="0"
+                                                                           Padding="1,0,1,1"
+                                                                           HeightRequest="100"
+                                                                           HorizontalOptions="FillAndExpand"
+                                                                           VerticalOptions="Start">
+                                                                        <StackLayout>
+                                                                            <Image Aspect="AspectFit"
+                                                                                   BackgroundColor="#efefef"
+                                                                                   HorizontalOptions="FillAndExpand"
+                                                                                   HeightRequest="100"
+                                                                                   Source="{Binding LoRes}">
+                                                                                <Image.GestureRecognizers>
+                                                                                    <TapGestureRecognizer Tapped="OnImageTapped" Command="{Binding ImageTappedCommand}"
+                                                                                                           CommandParameter="{Binding ImageId}"
+                                                                                                           NumberOfTapsRequired="2"></TapGestureRecognizer>
+                                                                                </Image.GestureRecognizers>
+                                                                            </Image>
+                                                                        </StackLayout>
+                                                                    </Frame>
+                                                                </StackLayout>
+                                                            </DataTemplate>
+                                                        </CarouselView.ItemTemplate>
+                                                    </CarouselView>
+                                                </StackLayout>
+                                            </Grid>
+                                        </ViewCell>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <!-- DK VALUE -->
+                            <!-- if value, different key layout -->
+                            <StackLayout Grid.ColumnSpan="2"
+                                         RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                                         IsVisible="{Binding IsValueDataType}"
+                                         x:Name="ValueTemplate"
+                                         Margin="0,0"
+                                         Padding="3,3">
+                                <Grid Padding="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                        <ColumnDefinition Width="5*"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="100"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Slider x:Name="Slider"
+                                            Value="{Binding Source={RelativeSource AncestorType={x:Type mvvm:FilterSelectionViewModel}}, Path=SliderValue, Mode=TwoWay}"
+                                            Minimum="0"
+                                            Maximum="100"
+                                            MinimumTrackColor="{x:StaticResource senck_brown}"
+                                            MaximumTrackColor="#ddd"
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="1" />
+                                    <Label Style="{StaticResource FilterSelectionLabel}"
+                                           Padding="0,0"
+                                           HeightRequest="100"
+                                           BackgroundColor="White"
+                                           x:Name="sliderLabel"
+                                           Grid.Row="0"
+                                           Grid.Column="2"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           Text="{Binding Source={x:Reference Slider}, Path=Value, StringFormat='{0:F0}'}"
+                                           HorizontalOptions="FillAndExpand"
+                                           VerticalOptions="CenterAndExpand"
+                                           Margin="0,0,0,0" />
+                                    <!--Button Padding="0,0,0,0" x:Name="SubmitSliderVal" Text="Ok" BackgroundColor="{x:StaticResource senck_green}" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" TextColor="{x:StaticResource notquitewhite}" FontSize="Small" VerticalOptions="CenterAndExpand" IsVisible="{Binding Source={RelativeSource AncestorType={x:Type mvvm:FilterSelectionViewModel}}, Path=IsValueDataType}" Command="{Binding Source={RelativeSource AncestorType={x:Type mvvm:FilterSelectionViewModel}}, Path=SubmitSliderValueCommand}"></-->
+                                    <!--Button BackgroundColor="White" BorderColor="AliceBlue" Margin="0,0,0,0" Padding="0,0,0,0" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="1" HorizontalOptions="CenterAndExpand" Text="&lt;" FontAttributes="Bold" FontSize="Small" VerticalOptions="CenterAndExpand" IsVisible="{Binding ShowCatUpCommand}" Command="{Binding GotoParentCommand}"></-->
+                                </Grid>
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>
+
+                <!-- Bottom -->
+                <StackLayout VerticalOptions="StartAndExpand" MinimumHeightRequest="100"
+                            IsVisible="{Binding ShowFilterSelection}"
+                            RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"
+                            RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1}"
+                            RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, Factor=0.2}">
+                    
+                    <Grid RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1}"
+                          RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0}"
+                          BackgroundColor="white"
+                          Margin="0,0,0,0"
+                          ColumnSpacing="2"
+                          VerticalOptions="FillAndExpand"
+                          IsVisible="{Binding ShowFilterSelection}"
+                          Padding="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"
+                                              RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0}"></ColumnDefinition>
+                            <ColumnDefinition RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"
+                                              RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5}"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4}"
+                                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0}"></RowDefinition>
+                            <RowDefinition RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.55}"
+                                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.4}"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Button Style="{StaticResource FilterSelectionLabel}"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                BackgroundColor="White"
+                                Margin="0"
+                                Padding="0"
+                                HorizontalOptions="CenterAndExpand"
+                                Text="Filter Zurücksetzen"
+                                Command="{Binding ResetSelectedTaxonCommand}"
+                                IsEnabled="{Binding EnableReset}"></Button>
+                        <Label Style="{StaticResource FilterSelectionLabel}"
+                               Grid.Row="0"
+                               Grid.Column="1"
+                               VerticalOptions="CenterAndExpand"
+                               HorizontalTextAlignment="Center"
+                               HorizontalOptions="CenterAndExpand"
+                               Text="{Binding SelectedTaxonCount, StringFormat='{0:N} Taxa'}"></Label>
+                        <Button Style="{StaticResource FilterSelectionLabel}"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                HorizontalOptions="FillAndExpand"                                
+                                VerticalOptions="CenterAndExpand"
+                                HeightRequest="{OnIdiom 50, Phone=40, Tablet=50, Desktop=50}"
+                                Text="Bestimmung auf BODENTIER hoch 4"
+                                TextColor="{StaticResource notquitewhite}"
+                                BackgroundColor="{StaticResource senck_brown}"
+                                Command="{Binding NavigateToWebCommand}"
+                                CommandParameter="{Binding SelectedTaxon}"></Button>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>

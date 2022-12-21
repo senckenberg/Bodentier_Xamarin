@@ -16,6 +16,7 @@ namespace KBS.App.TaxonFinder.Data
         public List<int> TaxonHits { get; set; }
         public string KeyDataType { get; set; }
         public int? VisibilityCategoryId { get; set; }
+        public int OrderPriority { get; set; }
         public List<string> ListSourceJson { get; set; }
         public bool IsValueType { get { return !string.IsNullOrEmpty(TagValue); } }
 

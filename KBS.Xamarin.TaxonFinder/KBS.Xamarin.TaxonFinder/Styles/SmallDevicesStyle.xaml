@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="KBS.App.TaxonFinder.SmallDevicesStyle">
+
+    <OnPlatform  x:TypeArguments="x:Double" iOS="10" Android="10" x:Key="PageSpacing" />
+    <OnPlatform  x:TypeArguments="Thickness" iOS="10" Android="10" x:Key="PagePadding" />
+    <OnIdiom  x:TypeArguments="x:Double" Tablet="18" Phone="12" x:Key="ResponsiveFontSize" />
+
+    <Style TargetType="Button" x:Key="MainButtonStyle">
+        <Setter Property="FontSize" Value="Default"/>
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="TextColor"
+                Value="{x:StaticResource senck_blue}" />
+    </Style>
+
+
+
+    <Style TargetType="Label"
+           x:Key="FilterSelectionLabel">
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="12"
+                         Tablet="18" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VerticalOptions"
+                Value="CenterAndExpand" />
+        <Setter Property="HorizontalTextAlignment">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:String"
+                         Phone="Start"
+                         Tablet="Center" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalOptions"
+                Value="StartAndExpand" />
+    </Style>
+
+    <!--Padding="15,0,0,0" Margin="0,0,5,0" -->
+    <Style TargetType="Grid"
+           x:Key="PaddedGrid">
+        <Setter Property="Padding">
+            <OnIdiom x:TypeArguments="Thickness"
+                     Phone="5,0,0,3"
+                     Tablet="20,0,0,5" />
+        </Setter>
+        <Setter Property="Margin">
+            <OnIdiom x:TypeArguments="Thickness"
+                     Phone="0,0,5,0"
+                     Tablet="0,0,5,0" />
+        </Setter>
+    </Style>
+    
+    <!-- not used -->
+    <Style TargetType="Entry" x:Key="MainEntryStyle">
+        <Setter Property="HeightRequest" Value="35"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="TextColor" Value="{x:StaticResource font_dark}"/>
+        <Setter Property="PlaceholderColor" Value="Gray" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="MainTitleStyle">
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="NormalTitleStyle">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+    </Style>
+</ResourceDictionary>

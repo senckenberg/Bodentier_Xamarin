@@ -1,0 +1,54 @@
+[
+  {
+    "OrderName": "Bodentiere",
+    "OrderSlug": "bestimmung-bodentiere"
+  },
+  {
+    "OrderName": "Doppelfüßer (Diplopoda)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Samenfüßer (Chordeumatida)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Bandfüßer (Polydesmida)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Schnurfüßer (Julida)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Saftkugler (Glomerida)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Pinselfüßer (Polyxenida)",
+    "OrderSlug": "bestimmung-doppelfuesser"
+  },
+  {
+    "OrderName": "Hundertfüßer (Chilopoda)",
+    "OrderSlug": "bestimmung-hunderfuesser-neu"
+  },
+  {
+    "OrderName": "Steinläufer (Lithobiomorpha)",
+    "OrderSlug": "bestimmung-hunderfuesser-neu"
+  },
+  {
+    "OrderName": "Skolopender(Scolopendromorpha)",
+    "OrderSlug": "bestimmung-hunderfuesser-neu"
+  },
+  {
+    "OrderName": "Erdkriecher (Geophilomorpha)",
+    "OrderSlug": "bestimmung-hunderfuesser-neu"
+  },
+  {
+    "OrderName": "Spinnenläufer (Scutigeromorpha)",
+    "OrderSlug": "bestimmung-hunderfuesser-neu"
+  },
+  {
+    "OrderName": "Asseln (Isopoda)",
+    "OrderSlug": "bestimmung-landasseln"
+  }
+]

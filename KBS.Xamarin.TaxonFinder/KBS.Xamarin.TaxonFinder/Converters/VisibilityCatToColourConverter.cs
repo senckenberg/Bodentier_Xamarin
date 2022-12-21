@@ -6,17 +6,31 @@ namespace KBS.App.TaxonFinder.Converters
 {
     public class VisibilityCatToColourConverter : IMarkupExtension, IValueConverter
     {
-        public object Convert(object value,Type targetType,object parameter,System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if(value != null)
+            if (value != null)
             {
                 if ((int)value == 2)
                 {
-                    return Color.FromHex("#e8c31c");
+                    if (Application.Current.Resources.TryGetValue("ampel_yellow", out var colour))
+                    {
+                        return (Color)colour;
+                    }
+                    else
+                    {
+                        return Color.DarkOrange;
+                    }
                 }
                 else if ((int)value == 3)
                 {
-                    return Color.DarkGreen;
+                    if (Application.Current.Resources.TryGetValue("ampel_green", out var colour))
+                    {
+                        return (Color)colour;
+                    }
+                    else
+                    {
+                        return Color.DarkGreen;
+                    }
                 }
             }
             return Color.DarkGray;

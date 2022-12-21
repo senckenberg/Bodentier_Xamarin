@@ -44,6 +44,8 @@ namespace KBS.App.TaxonFinder.Models
 		[DataMember]
 		public string Comment { get; set; }
 		[DataMember]
+		public string HabitatDescriptionForEvent { get; set; }
+		[DataMember]
 		public string ReportedByName { get; set; }
 		[DataMember]
 		public string ImageCopyright { get; set; }
@@ -69,6 +71,8 @@ namespace KBS.App.TaxonFinder.Models
 		public int? LocalityTemplateId { get; set; }
 		[DataMember]
 		public AdviceImageJsonItem[] Images { get; set; }
+		[DataMember]
+		public int? DiagnosisTypeId { get; set; }
 
 	}
 }

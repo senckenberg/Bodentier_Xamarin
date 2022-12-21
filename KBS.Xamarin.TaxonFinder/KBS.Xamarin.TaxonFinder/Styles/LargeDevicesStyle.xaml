@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="KBS.App.TaxonFinder.LargeDevicesStyle">
+
+    <OnIdiom  x:TypeArguments="x:Double" Tablet="30" Phone="20" x:Key="PageSpacing" />
+    <OnIdiom  x:TypeArguments="Thickness"
+              Tablet="0,0,0,20"
+              Phone="0,0,0,5"
+              x:Key="PagePadding" />
+    <OnIdiom  x:TypeArguments="x:Double" Tablet="18" Phone="12" x:Key="ResponsiveFontSize" />
+   
+    <!--Padding="15,0,0,0" Margin="0,0,5,0" -->
+    <Style TargetType="Grid"
+           x:Key="PaddedGrid">
+        <Setter Property="Padding">
+            <OnIdiom x:TypeArguments="Thickness"
+                     Phone="5,0,0,3"
+                     Tablet="20,0,0,5" />
+        </Setter>
+        <Setter Property="Margin">
+            <OnIdiom x:TypeArguments="Thickness"
+                     Phone="0,0,5,0"
+                     Tablet="0,0,5,0" />
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="MainButtonStyle">
+        <Setter Property="HeightRequest">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="40" Tablet="60"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="14" Tablet="24"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Margin">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="Thickness" Phone="8" Tablet="12"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="HorizontalOptions"
+                Value="Fill" />
+        <Setter Property="TextColor"
+                Value="{x:StaticResource senck_blue}" />
+
+        <!-- debugging -->
+        <!--
+        <Setter Property="TextColor">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="Color" Phone="{x:StaticResource senck_brown}" Tablet="#ff0000"/>
+            </Setter.Value>
+        </Setter>
+        -->
+    </Style>
+
+    <Style TargetType="Label" x:Key="FilterSelectionLabel">
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="12" Tablet="18"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VerticalOptions" Value="CenterAndExpand" />
+        <Setter Property="HorizontalTextAlignment">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:String" Phone="Start" Tablet="Center"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalOptions" Value="StartAndExpand" />
+    </Style>
+        
+    <!-- just for reference -->
+    <Style TargetType="Entry" x:Key="MainEntryStyle">
+        <Setter Property="HeightRequest">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="40" Tablet="60"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="15" Tablet="24"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="PlaceholderColor" Value="Gray" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="MainTitleStyle">
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="18" Tablet="24"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="NormalTitleStyle">
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double" Phone="15" Tablet="19"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+    </Style>
+
+</ResourceDictionary>

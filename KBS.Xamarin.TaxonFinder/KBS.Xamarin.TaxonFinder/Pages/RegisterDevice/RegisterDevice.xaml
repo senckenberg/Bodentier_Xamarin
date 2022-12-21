@@ -32,11 +32,19 @@
 						<Label Text="Nachname:"></Label>
 						<Entry Text="{Binding Surname}"></Entry>
 					</StackLayout>
-                        <Button Text="Anmelden" Command="{Binding LoginCommand}" x:Name="LoginButton" IsVisible="{Binding TryingToRegister, Converter={conv:BoolToInvertedBoolConverter}}" IsEnabled="{Binding IsBusy, Converter={conv:BoolToInvertedBoolConverter}}"></Button>
+                        <Button                             BackgroundColor="{x:StaticResource senck_blue}"
+                                                            TextColor="{x:StaticResource font_light}"
+                                                            Text="Anmelden" Command="{Binding LoginCommand}" x:Name="LoginButton" IsVisible="{Binding TryingToRegister, Converter={conv:BoolToInvertedBoolConverter}}" IsEnabled="{Binding IsBusy, Converter={conv:BoolToInvertedBoolConverter}}"></Button>
 				</StackLayout>
-				<Button Text="Abmelden" Command="{Binding LogoutCommand}" x:Name="LogoutButton" IsVisible="{Binding IsLoggedIn}"></Button>
+                    <Button Text="Abmelden"
+                            BackgroundColor="{x:StaticResource senck_blue}"
+                            TextColor="{x:StaticResource font_light}"
+                            Command="{Binding LogoutCommand}" x:Name="LogoutButton" IsVisible="{Binding IsLoggedIn}"></Button>
 				<Label Text="{Binding TopResult}" x:Name="TopResultLabel" IsVisible="{Binding IsLoggedIn}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"></Label>
-                    <Button Text="Neu registrieren" x:Name="AddUserButton" Clicked="AddUserButton_Clicked" Command="{Binding AddUserCommand}" IsVisible="{Binding IsLoggedIn, Converter={conv:BoolToInvertedBoolConverter}}" IsEnabled="{Binding IsBusy, Converter={conv:BoolToInvertedBoolConverter}}"></Button>
+                    <Button                             BackgroundColor="{x:StaticResource font_light}"
+                                                        BorderColor="{x:StaticResource senck_blue}"
+                                                        TextColor="{x:StaticResource senck_blue}"
+                                                        Text="Neu registrieren" x:Name="AddUserButton" Clicked="AddUserButton_Clicked" Command="{Binding AddUserCommand}" IsVisible="{Binding IsLoggedIn, Converter={conv:BoolToInvertedBoolConverter}}" IsEnabled="{Binding IsBusy, Converter={conv:BoolToInvertedBoolConverter}}"></Button>
 				<ActivityIndicator IsRunning="{Binding IsBusy}" VerticalOptions="CenterAndExpand"></ActivityIndicator>
 				<Label VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center" Text="{Binding Result}" FontSize="Large"></Label>
 			</StackLayout>

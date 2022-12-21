@@ -8,6 +8,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using static KBS.App.TaxonFinder.ViewModels.RecordListViewModel;
 
 [assembly: Xamarin.Forms.Dependency(typeof(MobileApi))]
 namespace KBS.App.TaxonFinder.iOS.Services
@@ -21,6 +23,7 @@ namespace KBS.App.TaxonFinder.iOS.Services
         private static readonly string _loginUrl = $"{_serviceUrl}ApplicationUser/Login/Mobile";
         private static readonly string _registerUrl = $"{_serviceUrl}ApplicationUser/Register/Mobile";
         private static readonly string _adviceServiceUrl_mobile = $"{_serviceUrl}Advice/SaveAdvice/Mobile";
+        private static readonly string _adviceServiceUrl_mobileSync = $"{_serviceUrl}Advice/SyncAdviceList/Mobile";
         private static readonly string _changesServiceUrl = $"{_serviceUrl}Advice/SyncAdvices";
         private static readonly string _mailServiceUrl = $"{_serviceUrl}values/Mail/SendFeedback";
         private static RecordDatabase _database;
@@ -123,6 +126,27 @@ namespace KBS.App.TaxonFinder.iOS.Services
                 return content;
             }
             throw new Exception("Übermittlung fehlgeschlagen.");
+        }
+
+        public async Task<string> SyncAdvices(SyncRequest syncRequest)
+        {
+
+            var handler = new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                MaxRequestContentBufferSize = 256000,
+            };
+            _client = new HttpClient(handler);
+            var stringContent = new StringContent(JsonConvert.SerializeObject(syncRequest), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(_adviceServiceUrl_mobileSync, stringContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return content;
+            }
+            throw new Exception("Übermittlung fehlgeschlagen.");
+
         }
 
         public async Task<string> SaveAdvicesByDevice(AdviceJsonItem[] adviceJsonItem)

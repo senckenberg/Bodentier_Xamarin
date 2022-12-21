@@ -1,6 +1,8 @@
 ﻿using KBS.App.TaxonFinder.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using static KBS.App.TaxonFinder.ViewModels.RecordListViewModel;
 
 namespace KBS.App.TaxonFinder.Services
 {
@@ -36,6 +38,13 @@ namespace KBS.App.TaxonFinder.Services
 		/// <param name="adviceJsonItem">The AdviceJsonItem to save.</param>
 		/// <returns>Returns "true"-string if the request was successfull.</returns>
 		Task<string> SaveAdvicesByDevice(AdviceJsonItem[] adviceJsonItem);
+
+		/// <summary>
+		/// Saves an Advice by sending an AdviceJsonItem to the service.
+		/// </summary>
+		/// <param name="adviceJsonItemList">The adviceJsonItemList to save.</param>
+		/// <returns>Returns "true"-string if the request was successfull.</returns>
+		Task<string> SyncAdvices(SyncRequest syncRequest);
 
 		/// <summary>
 		/// Requests the changes made to the Advices of the user.

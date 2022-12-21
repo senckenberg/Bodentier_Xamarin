@@ -1,30 +1,125 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage Title="Bestimmung wählen"
-			 xmlns="http://xamarin.com/schemas/2014/forms"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 x:Class="KBS.App.TaxonFinder.Views.OrderSelection"
-			 x:Name="OrderSelectionView">
+<ContentPage Title="Was möchtest Du bestimmen?"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KBS.App.TaxonFinder.Views.OrderSelection"
+             x:Name="OrderSelectionView">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Hilfe"
+                     Order="Primary"
+                     Clicked="Help_Clicked"
+                     IconImageSource="help.png"></ToolbarItem>
+    </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <AbsoluteLayout>
-            <Image Source="background.png" Aspect="AspectFill" AbsoluteLayout.LayoutBounds="1,1,0.8,0.6" AbsoluteLayout.LayoutFlags="All" Opacity="0.4"></Image>
-            <ScrollView Padding="5" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <Image Source="background.png"
+                   Aspect="AspectFill"
+                   AbsoluteLayout.LayoutBounds="1,1,0.8,0.6"
+                   AbsoluteLayout.LayoutFlags="All"
+                   Opacity="0.4"></Image>
+            <ScrollView Padding="5"
+                        AbsoluteLayout.LayoutBounds="0,0,1,1"
+                        AbsoluteLayout.LayoutFlags="All">
                 <StackLayout VerticalOptions="FillAndExpand">
                     <StackLayout VerticalOptions="StartAndExpand">
-                        <Button x:Name ="BodentiereSelectionButton" FontSize="Medium" TextColor="CornflowerBlue" Text="Bodentiere – Großgruppen bestimmen" Clicked="BodentiereSelectionButton_Clicked"></Button>
-                        <Button x:Name ="DoppelfuesserSelectionButton" FontSize="Medium" TextColor="{x:StaticResource senck_brown}" Text="Doppelfüßer –  Ordnungen bestimmen" Clicked="DoppelfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="BandfuesserSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Bandfüßer – Arten bestimmen" Clicked="BandfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="BohrfuesserSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Bohrfüßer – Arten bestimmen" Clicked="BohrfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="PinselfuesserSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Pinselfüßer – Arten bestimmen" Clicked="PinselfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SaftkuglerSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Saftkugler – Arten bestimmen" Clicked="SaftkuglerSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SamenfuesserSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Samenfüßer – Arten bestimmen" Clicked="SamenfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SchnurfuesserSelectionButton" FontSize="Small" TextColor="{x:StaticResource senck_brown}" Text="Schnurfüßer – Arten bestimmen" Clicked="SchnurfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="HundertfuesserSelectionButton" FontSize="Medium" TextColor="DarkGreen" Text="Hundertfüßer –  Ordnungen bestimmen" Clicked="HundertfuesserSelectionButton_Clicked"></Button>
-                        <Button x:Name ="ErdkriecherSelectionButton" FontSize="Small" TextColor="DarkGreen" Text="Erdkriecher – Arten bestimmen" Clicked="ErdkriecherSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SkolopenderSelectionButton" FontSize="Small" TextColor="DarkGreen" Text="Skolopender – Arten bestimmen" Clicked="SkolopenderSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SpinnenlaeuferSelectionButton" FontSize="Small" TextColor="DarkGreen" Text="Spinnenläufer – Arten bestimmen" Clicked="SpinnenlaeuferSelectionButton_Clicked"></Button>
-                        <Button x:Name ="SteinlaeuferSelectionButton" FontSize="Small" TextColor="DarkGreen" Text="Steinläufer – Arten bestimmen" Clicked="SteinlaeuferSelectionButton_Clicked"></Button>
-                        <Button x:Name ="LandasselnSelectionButton" FontSize="Medium" TextColor="IndianRed" Text="Landasseln – Arten bestimmen" Clicked="LandasselnSelectionButton_Clicked"></Button>
+                        <StackLayout Padding="10"
+                                     Margin="5">
+                            <Frame IsClippedToBounds="True"
+                                   HasShadow="True"
+                                   Padding="0"
+                                   BackgroundColor="White">
+                                <Frame.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness"
+                                                Android="5"
+                                                iOS="5" />
+                                </Frame.Margin>
+                                <StackLayout HorizontalOptions="FillAndExpand"
+                                             Orientation="Vertical">
+                                    <Image  Source="icon.png"
+                                            Aspect="AspectFit"
+                                            HeightRequest="{OnIdiom 100, Tablet=150}"
+                                            BackgroundColor="White" />
+                                    <BoxView HeightRequest="3"
+                                             BackgroundColor="{x:StaticResource order_bodentiere}"></BoxView>
+                                    <Grid HorizontalOptions="FillAndExpand"
+                                          Padding="3">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"></RowDefinition>
+                                            <RowDefinition Height="3*"></RowDefinition>
+                                            <RowDefinition Height="2*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0"
+                                               TextColor="{x:StaticResource font_dark}"
+                                               FontSize="{OnIdiom 'Medium', Phone='Medium', Tablet='Large'}"
+                                               Padding="{OnIdiom '0,0', Tablet='15,0'}"
+                                               BackgroundColor="{x:StaticResource order_bodentiere}"
+                                               Text="Bodentiere bestimmen" />
+                                        <Label Grid.Row="1"
+                                               Text="Du hast ein unbekanntes Bodentier gefunden und möchtest wissen zu welcher größeren Gruppe dieses gehört?"
+                                               Padding="{OnIdiom '0,0', Phone='10,5', Tablet='15,0'}"
+                                               FontSize="{OnIdiom 'Small', Phone='Small', Tablet='Medium'}" />
+                                        <Button Grid.Row="2"
+                                                x:Name="BodentiereSelectionButton"
+                                                Margin="0,5,0,15"
+                                                FontSize="{OnIdiom 'Medium', Phone='Medium', Tablet='Large'}"
+                                                Padding="{OnIdiom '0,0', Tablet='15,0'}"
+                                                TextColor="{x:StaticResource font_light}"
+                                                BackgroundColor="{x:StaticResource senck_blue}"
+                                                Text="Bodentiere allgemein - bestimmen"
+                                                Clicked="BodentiereSelectionButton_Clicked"></Button>
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                            <Frame IsClippedToBounds="True"
+                                   HasShadow="True"
+                                   Padding="0"
+                                   BackgroundColor="White">
+                                <Frame.Margin>
+                                    <OnPlatform x:TypeArguments="Thickness"
+                                                Android="5"
+                                                iOS="5" />
+                                </Frame.Margin>
+
+                                <StackLayout HorizontalOptions="FillAndExpand"
+                                             Orientation="Vertical">
+                                    <Image  Source="Saftkugler3.jpg"
+                                            Aspect="AspectFit"
+                                            HeightRequest="{OnIdiom 100, Tablet=150}"
+                                            BackgroundColor="White" />
+                                    <BoxView HeightRequest="3"
+                                             BackgroundColor="{x:StaticResource senck_green}"></BoxView>
+                                    <Grid HorizontalOptions="FillAndExpand"
+                                          Padding="3">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"></RowDefinition>
+                                            <RowDefinition Height="3*"></RowDefinition>
+                                            <RowDefinition Height="2*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0"
+                                               TextColor="{x:StaticResource font_light}"
+                                               FontSize="{OnIdiom 'Medium', Phone='Medium', Tablet='Large'}"
+                                               BackgroundColor="{x:StaticResource senck_green}"
+                                               Padding="{OnIdiom '0,0', Tablet='15,0'}"
+                                               Text="Du bist dir schon sicher?" />
+                                        <Label Grid.Row="1"
+                                               Text="Du bist dir bereits sicher, dass du einen Doppelfüßer, Hundertfüßer oder eine Landassel gefunden hast und möchtest diese/n nun genauer bestimmen?"
+                                               Padding="{OnIdiom '0,0', Phone='10,5', Tablet='15,0'}"
+                                               FontSize="{OnIdiom 'Small', Phone='Small', Tablet='Medium'}" />
+                                        <Button Grid.Row="2"
+                                                x:Name="DetailedSelectionButton"
+                                                FontSize="{OnIdiom 'Medium', Phone='Medium', Tablet='Large'}"
+                                                Padding="{OnIdiom '0,0', Tablet='15,0'}"
+                                                Margin="0,5,0,15"
+                                                TextColor="{x:StaticResource font_light}"
+                                                BackgroundColor="{x:StaticResource senck_blue}"
+                                                Text="Du bist dir schon sicher?"
+                                                Clicked="DetailedSelectionButton_Clicked"></Button>
+                                    </Grid>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
                     </StackLayout>
                 </StackLayout>
             </ScrollView>

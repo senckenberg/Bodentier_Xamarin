@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+			 Title="Tutorial"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KBS.App.TaxonFinder.Views.Tutorial"
+             xmlns:mvvm="clr-namespace:KBS.App.TaxonFinder.ViewModels"
+             xmlns:cust="clr-namespace:KBS.App.TaxonFinder.CustomRenderers"
+             xmlns:conv="clr-namespace:KBS.App.TaxonFinder.Converters"
+             xmlns:dpd="clr-namespace:KBS.App.TaxonFinder.CustomRenderers">
+    
+    <ContentPage.BindingContext>
+        <mvvm:TutorialViewModel></mvvm:TutorialViewModel>
+    </ContentPage.BindingContext>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Hilfe" Order="Primary" Clicked="Help_Clicked" Icon="help.png"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Image Source="background.png"
+                   Aspect="AspectFill"
+                   AbsoluteLayout.LayoutBounds="1,1,0.8,0.6"
+                   AbsoluteLayout.LayoutFlags="All"
+                   Opacity="0.4"></Image>
+            <CarouselView ItemsSource="{Binding Monkeys}" x:Name="carouselView"
+                          AbsoluteLayout.LayoutBounds="0,0,1,0.89"
+                          PeekAreaInsets="0"
+                          HorizontalScrollBarVisibility="Always"
+                          AbsoluteLayout.LayoutFlags="All">
+                <CarouselView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal"
+                                       ItemSpacing="0"
+                                       SnapPointsType="MandatorySingle" />
+                </CarouselView.ItemsLayout>
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Frame HasShadow="True"
+                                   BorderColor="DarkGray"
+                                   CornerRadius="5"
+                                   Margin="20"
+                                   HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="FillAndExpand">
+                                <StackLayout>
+                                    <Image Source="{Binding ImageSource}"
+                                           Aspect="AspectFit"
+                                           VerticalOptions="FillAndExpand" />
+                                    <Label Text="{Binding Title}" IsVisible="False"
+                                           FontAttributes="Bold"
+                                           FontSize="Medium"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                    <cust:HtmlLabel Text="{Binding Description}" IsVisible="False"
+                                           HorizontalOptions="Center"
+                                           MaxLines="5"
+                                           LineBreakMode="TailTruncation" />
+                                </StackLayout>
+                            </Frame>
+                            
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+            <Button Text="Überspringen"
+                    AbsoluteLayout.LayoutBounds="0,1,1,0.1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    BackgroundColor="{x:StaticResource senck_blue}"
+                    TextColor="{x:StaticResource font_light}"
+                    VerticalOptions="End"
+                    FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Large'}"
+                    Clicked="SkipButton_Clicked"></Button>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

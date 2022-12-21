@@ -18,7 +18,10 @@
 
 	<ContentPage.Content>
 		<StackLayout Spacing="0" CompressedLayout.IsHeadless="True">
-			<SearchBar Text="{Binding SearchText, Mode=TwoWay}" IsVisible="{Binding EnableSearchbar}" Placeholder="{Binding PlaceholderText}"></SearchBar>
+                <StackLayout>
+                    <Button Text="Unbekannte Art erfassen" IsVisible="{Binding NewRecord}" BackgroundColor="{x:StaticResource senck_blue}" TextColor="{x:StaticResource font_light}" Clicked="UnknownSpeciesButton_Clicked"></Button>
+                </StackLayout>
+                <SearchBar Text="{Binding SearchText, Mode=TwoWay}" IsVisible="{Binding EnableSearchbar}" Placeholder="{Binding PlaceholderText}"></SearchBar>
 			<ListView CachingStrategy="RecycleElement" x:Name="TaxonListListView" ItemTapped="ListView_ItemTapped" ItemsSource="{Binding SelectedTaxonList}" HasUnevenRows="False" IsGroupingEnabled="True">
 				<ListView.GroupHeaderTemplate>
 					<DataTemplate>
@@ -31,8 +34,13 @@
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="ListView_HeaderTapped" CommandParameter="{Binding OrderName}"></TapGestureRecognizer>
                                 </Grid.GestureRecognizers>
-                                    <Label HorizontalOptions="Start" VerticalOptions="CenterAndExpand" Text="{Binding OrderName}" FontSize="Small"></Label>
-                                    <Label Grid.Column="1" FontSize="Small" HeightRequest="33" Padding="1" Margin="0" WidthRequest="100" HorizontalOptions="CenterAndExpand" Text="{Binding ExpandedIcon}" TextColor="{x:StaticResource senck_brown}"></Label>
+                                <Label HorizontalOptions="Start"
+                                       VerticalOptions="CenterAndExpand"
+                                       Text="{Binding OrderName}"
+                                       FontSize="{OnIdiom 'Small', Tablet='Medium', Phone='Small'}"></Label>
+                                <Label Grid.Column="1"
+                                       FontSize="Small"
+                                       HeightRequest="{OnIdiom 33, Phone=33, Tablet=45}" Padding="1" Margin="0" WidthRequest="100" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="{Binding ExpandedIcon}" TextColor="{x:StaticResource senck_blue}"></Label>
                             </Grid>
                         </ViewCell>
 					</DataTemplate>
@@ -48,10 +56,10 @@
                                         <ColumnDefinition Width="100"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="33"></RowDefinition>
+                                        <RowDefinition Height="{OnIdiom 33, Phone=33, Tablet=45}"></RowDefinition>
                                     </Grid.RowDefinitions>
                                     <!--Image Grid.Column="0" Source="{Binding ListImage}"></-->
-                                    <Label Grid.Column="1" Text="{Binding LocalName}" VerticalOptions="Center" FontSize="Small" HorizontalTextAlignment="Start" HorizontalOptions="StartAndExpand" Margin="0"></Label>
+                                    <Label Grid.Column="1" Text="{Binding LocalName}" VerticalOptions="Center" FontSize="{OnIdiom 'Small', Tablet='Medium', Phone='Small'}" HorizontalTextAlignment="Start" HorizontalOptions="StartAndExpand" Margin="0"></Label>
                                     <Label Grid.Column="2" Text="{Binding AllowTaxonInfoViewIcon}" VerticalOptions="Center" ></Label>
                                 </Grid>
                             </Grid>
@@ -60,13 +68,25 @@
 				</ListView.ItemTemplate>
 			</ListView>
             <StackLayout WidthRequest="100">
-                <Grid WidthRequest="100" ColumnSpacing="0">
+                <Grid WidthRequest="100" HeightRequest="100" ColumnSpacing="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Button BackgroundColor="{x:StaticResource senck_green}" TextColor="White" BorderWidth="1" Grid.Column="0" Grid.Row="0" FontSize="Small" Text="Alle einklappen" VerticalOptions="FillAndExpand" Clicked="Switchgroupingbutton_collapse_clicked" x:Name="SwitchGroupingButtonCollapse"></Button>
-                    <Button Grid.Column="1" Grid.Row="0" BackgroundColor="{x:StaticResource senck_brown}" TextColor="White" Text="Alle ausklappen" FontSize="Small" VerticalOptions="FillAndExpand" Clicked="Switchgroupingbutton_expand_clicked" x:Name="SwitchGroupingButtonExpand"></Button>
+                    <Button BackgroundColor="{x:StaticResource senck_blue}"
+                            TextColor="{x:StaticResource font_light}"
+                            BorderWidth="1"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
+                            Text="Alle einklappen" VerticalOptions="FillAndExpand" Clicked="Switchgroupingbutton_collapse_clicked" x:Name="SwitchGroupingButtonCollapse"></Button>
+                    <Button Grid.Column="1"
+                            Grid.Row="0"
+                            FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
+                            BackgroundColor="{x:StaticResource font_light}"
+                            BorderColor="{x:StaticResource senck_blue}"
+                            TextColor="{x:StaticResource senck_blue}"
+                            Text="Alle ausklappen" VerticalOptions="FillAndExpand" Clicked="Switchgroupingbutton_expand_clicked" x:Name="SwitchGroupingButtonExpand"></Button>
                 </Grid>
             </StackLayout>
         </StackLayout>

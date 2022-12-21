@@ -19,7 +19,10 @@
         <StackLayout>
             <StackLayout>
                 <StackLayout Orientation="Horizontal" Spacing="0" HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
-                    <Label Text="{Binding SelectedTaxon.LocalName}" FontAttributes="Italic" FontSize="Medium" Margin="12,0,0,0" />
+                    <Label Text="{Binding SelectedTaxon.LocalName}"
+                           FontAttributes="Italic"
+                           FontSize="{OnIdiom 'Medium', Phone='Medium', Tablet='Large'}"
+                           Margin="15,0,0,0" />
                     <!--Image Source="{Binding SelectedTaxon.IdentImageMale}" HeightRequest="24" WidthRequest="12" VerticalOptions="Center" HorizontalOptions="End">< />
 						<Image Source="{Binding SelectedTaxon.IdentImageFemale}" HeightRequest="24" WidthRequest="12" VerticalOptions="Center" HorizontalOptions="End"></Image-->
                 </StackLayout>
@@ -56,7 +59,7 @@
                                                                 <TapGestureRecognizer  Command="{Binding Source={RelativeSource AncestorType={x:Type mvvm:TaxonInfoViewModel}},Path=ImageTappedCommand}" CommandParameter="{Binding ImageId}" NumberOfTapsRequired="2"></TapGestureRecognizer>
                                                             </Image.GestureRecognizers>
                                                         </Image>
-                                                        <Label FontSize="Micro" Text="Doppel-Tap für mehr Informationen"></Label>
+                                                        <Label FontSize="Micro" Text="Doppel-Tap für Bildinformationen"></Label>
                                                         <!--cust:HtmlLabel Text="{Binding Description}"
                                                            TextColor="#333"
 											               FontAttributes="Italic"
@@ -72,8 +75,8 @@
                                     </CarouselView.ItemTemplate>
                                 </CarouselView>
                             </StackLayout>
-                            <StackLayout Padding="10" IsVisible="{Binding AllowTaxonInfoView}">
-                                <Button Text="Fund melden" Command="{Binding SaveTaxonCommand}" TextColor="{StaticResource notquitewhite}" x:Name="SaveTaxonButton" BackgroundColor="{StaticResource senck_green}"></Button>
+                            <StackLayout Padding="5" IsVisible="{Binding AllowTaxonInfoView}">
+                                <Button Text="Fund melden" Command="{Binding SaveTaxonCommand}" TextColor="{x:StaticResource font_light}" x:Name="SaveTaxonButton" BackgroundColor="{StaticResource senck_blue}"></Button>
                             </StackLayout>
                             <StackLayout>
                             </StackLayout>

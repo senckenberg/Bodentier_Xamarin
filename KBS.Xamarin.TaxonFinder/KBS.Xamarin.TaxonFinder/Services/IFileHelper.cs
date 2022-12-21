@@ -12,11 +12,13 @@ namespace KBS.App.TaxonFinder.Services
 		string GetLocalAppPath(string filename);
 		string GetAllText(string filePath);
 		string GetBase64FromImagePath(string imagePath);
+		byte[] GetBytesFromBase64String(string base64String);
 		MediaFile CopyFileToApp(string mediaPath);
 		void CopyFileToLocal(byte[] file, string filename);
 		Task CopyFileToLocalAsync(Task<byte[]> image, string filename);
 		byte[] DownloadFile(string uri);
 		Task<byte[]> DownloadFileAsync(string uri);
 		void DeleteFile(string file);
-	}
+        bool RemoteFileExists(string v);
+    }
 }

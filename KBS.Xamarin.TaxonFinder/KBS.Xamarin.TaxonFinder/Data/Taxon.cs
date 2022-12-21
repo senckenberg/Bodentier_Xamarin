@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xamarin.Essentials;
@@ -11,6 +12,7 @@ namespace KBS.App.TaxonFinder.Data
         public int TaxonId { get; set; }
         public int TaxonTypeId { get; set; }
         public string TaxonName { get; set; }
+        public Guid? Identifier { get; set; }
         private string localName;
         public string LocalName
         {
@@ -100,9 +102,13 @@ namespace KBS.App.TaxonFinder.Data
         {
             get
             {
-                if (TaxonomyStateName == "sp.")
+                if (hasDeterminationLink)
                 {
                     return "\u2794";
+                }
+                else if (TaxonomyStateName == "sp.")
+                {
+                    return "🐛";
                 }
                 return "";
             }
@@ -160,7 +166,8 @@ namespace KBS.App.TaxonFinder.Data
         {
             get
             {
-                if (Images.Count > 0)
+                var imageDate = Preferences.Get("imageDate", "");
+                if (Images.Count > 0 && imageDate != "")
                 {
                     return true;
                 }
@@ -177,5 +184,10 @@ namespace KBS.App.TaxonFinder.Data
                 return searchString;
             }
         }
+
+        public string navigateToWebSlug { get; set; }
+        public bool hasDeterminationLink { get; set; }
+        public string DeterminationNavLink { get; set; }
+
     }
 }

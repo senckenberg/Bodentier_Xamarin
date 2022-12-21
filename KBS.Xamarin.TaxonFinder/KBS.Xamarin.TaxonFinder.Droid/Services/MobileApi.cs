@@ -8,6 +8,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using static KBS.App.TaxonFinder.ViewModels.RecordListViewModel;
 
 [assembly: Xamarin.Forms.Dependency(typeof(MobileApi))]
 namespace KBS.App.TaxonFinder.Droid.Services
@@ -18,9 +20,14 @@ namespace KBS.App.TaxonFinder.Droid.Services
         private HttpClient _client = new HttpClient() { MaxResponseContentBufferSize = 256000 };
 
         private static readonly string _serviceUrl = "https://www.idoweb.bodentierhochvier.de/api/";
-        private static readonly string _loginUrl = $@"{_serviceUrl}ApplicationUser/Login/Mobile";
+        private static readonly string _serviceUrl_dev = "https://192.168.2.108:45455/api/";
+        private static readonly string _loginUrl = $@"{_serviceUrl}ApplicationUser/Login/MobileV2";
+        //previous versions use below
+        //private static readonly string _loginUrl = $@"{_serviceUrl}ApplicationUser/Login/Mobile";
         private static readonly string _registerUrl = $@"{_serviceUrl}ApplicationUser/Register/Mobile";
         private static readonly string _adviceServiceUrl_mobile = $@"{_serviceUrl}Advice/SaveAdvice/Mobile";
+        private static readonly string _adviceServiceUrl_mobileSync = $@"{_serviceUrl}Advice/SyncAdviceList/Mobile";
+        private static readonly string _adviceServiceUrl_mobileSync_dev = $@"{_serviceUrl_dev}Advice/SyncAdviceList/Mobile";
         private static readonly string _changesServiceUrl = $@"{_serviceUrl}Advice/SyncAdvices";
         private static readonly string _mailServiceUrl = $@"{_serviceUrl}values/Mail/SendFeedback";
         private static RecordDatabase _database;
@@ -62,7 +69,8 @@ namespace KBS.App.TaxonFinder.Droid.Services
                     var response_content = await response.Content.ReadAsStringAsync();
                     if (response_content.Contains('"'))
                     {
-                        response_content = JsonConvert.DeserializeObject(response_content) as string;
+                        string response_content_string = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<ViewModels.RegisterDeviceViewModel.DeviceUserInfo>(response_content));
+                        return response_content_string;
                     }
                     return response_content;
                 }
@@ -147,6 +155,7 @@ namespace KBS.App.TaxonFinder.Droid.Services
             throw new Exception("Übermittlung fehlgeschlagen.");
 
         }
+
         public async Task<string> SendFeedback(string text, string mail)
         {
             if (mail == null) { mail = ""; }
@@ -168,8 +177,40 @@ namespace KBS.App.TaxonFinder.Droid.Services
 
             throw new Exception("Übermittlung fehlgeschlagen.");
         }
-    }
 
+        public async Task<string> SyncAdvices(SyncRequest syncRequest)
+        {
+            try
+            {
+
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                    MaxRequestContentBufferSize = 256000
+                };
+
+                _client = new HttpClient(handler);
+                var dbg = JsonConvert.SerializeObject(syncRequest);
+
+                var stringContent = new StringContent(JsonConvert.SerializeObject(syncRequest), Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync(_adviceServiceUrl_mobileSync, stringContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return content;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                var db1 = ex;
+                throw new Exception("Übermittlung fehlgeschlagen.");
+            }
+
+
+        }
+    }
 
     public class RegisterModel
     {

@@ -42,6 +42,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 }
                 OnPropertyChanged(nameof(BlankSize));
                 OnPropertyChanged(nameof(ImageSize));
+                OnPropertyChanged(nameof(NewRecord));
             }
         }
         public GridLength ImageSize { get; set; }

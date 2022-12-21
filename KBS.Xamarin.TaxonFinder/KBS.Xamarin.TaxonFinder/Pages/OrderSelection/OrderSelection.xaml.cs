@@ -8,79 +8,30 @@ namespace KBS.App.TaxonFinder.Views
     {
 
         public List<string> groupList = new List<string> { "Bodentiere", "Doppelfüßer (Diplopoda)", "Samenfüßer (Chordeumatida)", "Bandfüßer (Polydesmida)", "Schnurfüßer (Julida)", "Saftkugler (Glomerida)", "Pinselfüßer (Polyxenida)", "Bohrfüßer (Polyzoniida)", "Hundertfüßer (Chilopoda)", "Steinläufer (Lithobiomorpha)", "Skolopender(Scolopendromorpha)", "Erdkriecher (Geophilomorpha)", "Spinnenläufer (Scutigeromorpha)", "Asseln (Isopoda)" };
+        private FilterSelectionV2 filterSelection;
 
         public OrderSelection()
         {
             InitializeComponent();
+            filterSelection = new FilterSelectionV2();
         }
 
         private void BodentiereSelectionButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new FilterSelection("Bodentiere"));
+            filterSelection = new FilterSelectionV2();
+            filterSelection.FilterTagGroupName = "Bodentiere";
+            Navigation.PushAsync(filterSelection);
         }
 
-        private void DoppelfuesserSelectionButton_Clicked(object sender, EventArgs e)
+        private void DetailedSelectionButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new FilterSelection("Doppelfüßer (Diplopoda)"));
-        }
-        private void SamenfuesserSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Samenfüßer (Chordeumatida)"));
+            //filterSelection.FilterTagGroupName = "Bodentiere";
+            Navigation.PushAsync(new OrderSelectionDetail());
         }
 
-        private void BandfuesserSelectionButton_Clicked(object sender, EventArgs e)
+        private void Help_Clicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new FilterSelection("Bandfüßer (Polydesmida)"));
-        }
-
-        private void SchnurfuesserSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Schnurfüßer (Julida)"));
-        }
-
-        private void SaftkuglerSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Saftkugler (Glomerida)"));
-        }
-
-        private void PinselfuesserSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Pinselfüßer (Polyxenida)"));
-        }
-
-        private void BohrfuesserSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Bohrfüßer (Polyzoniida)"));
-        }
-
-        private void HundertfuesserSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Hundertfüßer (Chilopoda)"));
-        }
-
-        private void SteinlaeuferSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Steinläufer (Lithobiomorpha)"));
-        }
-
-        private void SkolopenderSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Skolopender (Scolopendromorpha)"));
-        }
-
-        private void ErdkriecherSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Erdkriecher (Geophilomorpha)"));
-        }
-
-        private void SpinnenlaeuferSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Spinnenläufer (Scutigeromorpha)"));
-        }
-
-        private void LandasselnSelectionButton_Clicked(object sender, EventArgs e)
-        {
-            Navigation.PushAsync(new FilterSelection("Asseln (Isopoda)"));
+            Navigation.PushAsync(new HelpPage(this));
         }
 
     }

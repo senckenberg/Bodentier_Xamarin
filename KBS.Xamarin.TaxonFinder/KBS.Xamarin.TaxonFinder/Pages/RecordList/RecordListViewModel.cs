@@ -119,6 +119,8 @@ namespace KBS.App.TaxonFinder.ViewModels
         {
             GetSelectedRecord();
             SaveTaxaCommand = new Command(async () => await SaveTaxa());
+            SyncAdvicesCommand = new Command(async () => await SyncAdvices());
+            GoToLoginCommand = new Command(async () => await GoToLogin());
             CopyCommand = new Command<int>(async arg => await Copy(arg));
             _mobileApi = DependencyService.Get<IMobileApi>();
             SyncButtonText = "Funde synchronisieren";
@@ -126,6 +128,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             ShowSyncButton = true;
             OnPropertyChanged(nameof(ShowSyncButton));
             NavigateToWebCommand = new Command<Taxon>(async arg => await NavigateToWeb(arg));
+            CheckLogin();
         }
 
         #endregion
@@ -135,11 +138,109 @@ namespace KBS.App.TaxonFinder.ViewModels
         public ICommand NavigateToWebCommand { get; set; }
         private async Task NavigateToWeb(Taxon taxon)
         {
-            await Xamarin.Essentials.Launcher.OpenAsync(new Uri($"https://bodentierhochvier.de/erfassen/funde"));
+            await Xamarin.Essentials.Launcher.OpenAsync(new Uri($"https://bodentierhochvier.de/mein-bereich/funde/"));
         }
 
         #endregion
 
+
+        #region GoToLogin Command
+
+        public ICommand GoToLoginCommand { get; set; }
+        private async Task GoToLogin()
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new RegisterDevice());
+        }
+        #endregion
+
+
+        #region SyncAdvices Command
+
+        public ICommand SyncAdvicesCommand { get; set; }
+
+        private async Task SyncAdvices()
+        {
+            try
+            {
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    throw new Exception("Zur Synchronisation Internetverbindung herstellen.");
+                }
+                //go to login > open login
+                if (Unauthorized)
+                {
+                    Unauthorized = false;
+                    await App.Current.MainPage.Navigation.PushAsync(new RegisterDevice());
+                    SyncButtonText = "Funde synchronisieren";
+                    throw new Exception("");
+                }
+                //unauthorized > hint: go to login
+                else if (Database.GetRegister() == null)
+                {
+                    Unauthorized = true;
+                    SyncButtonText = "Anmeldung öffnen";
+                    throw new UnauthorizedAccessException("Zur Synchronisation von Fundmeldungen anmelden.");
+                }
+                RecordEditViewModel revm = new RecordEditViewModel();
+                int? count = 0;
+                string result;
+                IsBusy = true;
+                var userName = Database.GetUserName();
+
+                //List<AdviceJsonItemSync> resultJson = SelectedRecordList.Where(i => i.IsEditable).Select(i => revm.ConvertToJsonForSync(i)).ToList();
+                var dbg = await _database.GetRecordsAsync();
+                List<AdviceJsonItemSync> resultJson = SelectedRecordList.Select(i => revm.ConvertToJsonForSync(i)).ToList();
+                SyncRequest syncRequest = new SyncRequest()
+                {
+                    AdviceList = resultJson,
+                    DeviceId = DependencyService.Get<IDeviceId>().GetDeviceId(),
+                    DeviceHash = Database.GetRegister().Result.DeviceHash,
+                };
+
+                result = await _mobileApi.SyncAdvices(syncRequest);
+
+
+                SyncResponse result_obj = JsonConvert.DeserializeObject<SyncResponse>(result);
+                if (result_obj.succeeded == true)
+                {
+                    //List<RecordModel> recordModelList = result_obj.AdviceList.Select(i => revm.ConvertToRecordModel(i)).ToList();
+                    count = Database.UpdateFromSyncList(result_obj.AdviceList);
+                    //Database.SetSynced(advItem[0].AdviceId);
+                }
+
+                /*
+                var backSynchronizedCount = await SynchronizeBack();
+                count += backSynchronizedCount;
+                */
+                if (count != null)
+                {
+                    result = "Fundmeldungen synchronisiert";
+                }
+                else
+                {
+                    result = "Bei der Synchronisation ist ein Fehler aufgetreten";
+                }
+
+                IsBusy = false;
+
+                SelectedRecordList.Clear();
+                Records = await Database.GetRecordsAsync();
+                SelectedRecordList = new ObservableCollection<RecordModel>(Records.Where(i => i.DeletionDate == null));
+                Result = result;
+                ShowSyncButton = false;
+                OnPropertyChanged(nameof(ShowSyncButton));
+                OnPropertyChanged(nameof(SelectedRecordList));
+
+            }
+            catch (Exception ex)
+            {
+                var dbg = ex;
+                Trace.WriteLine(ex.Message);
+                Result = "Es ist ein Fehler aufgetreten.";
+                IsBusy = false;
+            }
+        }
+        #endregion
 
         #region SaveTaxa Command
 
@@ -214,7 +315,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                 SelectedRecordList.Clear();
                 Records = await Database.GetRecordsAsync();
-                SelectedRecordList = new ObservableCollection<RecordModel>(Records);
+                SelectedRecordList = new ObservableCollection<RecordModel>(Records.Where(i => i.DeletionDate != null));
                 Result = result;
                 ShowSyncButton = false;
                 OnPropertyChanged(nameof(ShowSyncButton));
@@ -224,6 +325,27 @@ namespace KBS.App.TaxonFinder.ViewModels
                 IsBusy = false;
                 Result = e.Message;
             }
+        }
+
+        public void CheckLogin()
+        {
+            if (Database.GetRegister() == null)
+            {
+                Unauthorized = true;
+                ShowSyncButton = false;
+                Result = "Zur Synchronisation bitte anmelden";
+                OnPropertyChanged(nameof(Unauthorized));
+                OnPropertyChanged(nameof(ShowSyncButton));
+            }
+            else {
+                Unauthorized = false;
+                ShowSyncButton = true;
+                Result = "";
+                OnPropertyChanged(nameof(Unauthorized));
+                OnPropertyChanged(nameof(ShowSyncButton));
+
+            }
+
         }
 
         private async Task<int> SynchronizeBack()
@@ -241,7 +363,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 var allRecords = await Database.GetRecordsAsync();
                 foreach (var changedAdvice in changesList)
                 {
-                    var record = allRecords.Find(i => i.Identifier == changedAdvice.Identifier);
+                    var record = allRecords.Find(i => Guid.Parse(i.Identifier) == changedAdvice.Identifier);
                     if (record != null)
                     {
                         record.TaxonId = changedAdvice.TaxonId;
@@ -341,8 +463,22 @@ namespace KBS.App.TaxonFinder.ViewModels
         public class ResultObj
         {
             public bool succeeded { get; set; }
-            public string [] errors { get; set; }
+            public string[] errors { get; set; }
             public int ObservationId { get; set; }
+        }
+
+        public class SyncRequest
+        {
+            public string DeviceId { get; set; }
+            public string DeviceHash { get; set; }
+            public List<AdviceJsonItemSync> AdviceList { get; set; }
+        }
+
+        public class SyncResponse
+        {
+            public bool succeeded { get; set; }
+            public string[] errors { get; set; }
+            public List<AdviceJsonItemSync> AdviceList { get; set; }
         }
 
     }

@@ -5,6 +5,7 @@
 				 xmlns:dpd="clr-namespace:KBS.App.TaxonFinder.CustomRenderers"
 				 xmlns:mvvm="clr-namespace:KBS.App.TaxonFinder.ViewModels"
 				 xmlns:conv="clr-namespace:KBS.App.TaxonFinder.Converters"
+                 xmlns:cust="clr-namespace:KBS.App.TaxonFinder.CustomRenderers"
 				 x:Class="KBS.App.TaxonFinder.Views.RecordEdit"
 				 x:Name="RecordEditView"
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -22,12 +23,22 @@
             <ScrollView VerticalOptions="FillAndExpand" x:Name="MapHolder" >
                 <StackLayout>
                     <StackLayout Padding="10,10,10,0">
-                        <Label FontSize="Large" x:Name="TaxonName" IsEnabled="{Binding IsEditable}"></Label>
+                                                
+                        <StackLayout x:Name="TaxonPickerContainer">
+                            <StackLayout>
+                                <Label Text="Tier:"></Label>
+                                <Picker IsEnabled="{Binding IsEditable}" x:Name="TaxonPicker" SelectedIndexChanged="OnTaxonPickerSelectedIndexChanged" ItemsSource="{Binding TaxonPickerItemsSource}" Title="" TitleColor="{x:StaticResource senck_green}">
+                                </Picker>
+                            </StackLayout>
+                        </StackLayout>
 
-                        <Label Text="Nächstgelegener Ort*:" IsEnabled="{Binding IsEditable}"></Label>
+                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Nächstgelegener Ort &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Entry Keyboard="Default" Text="{Binding HabitatName}" IsEnabled="{Binding IsEditable}" x:Name="PlaceEntry"></Entry>
 
-                        <Label Text="Fundmelder Name*:" IsEnabled="{Binding IsEditable}"></Label>
+                        <Label Text="Genaue Lage und Lebensraum:" IsEnabled="{Binding IsEditable}"></Label>
+                        <Entry Keyboard="Default" Text="{Binding HabitatDescriptionForEvent}" IsEnabled="{Binding IsEditable}" x:Name="HabitatDescriptionForEventEntry"></Entry>
+
+                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Fundmelder*in Name  &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Entry Keyboard="Default" Text="{Binding ReportedByName}" IsEnabled="{Binding IsEditable}" x:Name="ReportedByEntry"></Entry>
 
                         <Label Text="Datum des Fundes:" IsEnabled="{Binding IsEditable}"></Label>
@@ -35,11 +46,46 @@
                             <DatePicker.Format>dd.MM.yyyy</DatePicker.Format>
                         </DatePicker>
 
-                        <Label Text="Anzahl*:" IsEnabled="{Binding IsEditable}"></Label>
-                        <Entry Keyboard="Numeric" Text="{Binding TotalCount}" x:Name="TotalCount" IsEnabled="{Binding IsEditable}"></Entry>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="3*" />
+                                <RowDefinition Height="7*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*"></ColumnDefinition>
+                                <ColumnDefinition Width="5*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Text="Anzahl Männchen:" IsEnabled="{Binding IsEditable}"></Label>
+                            <Entry Grid.Row="1" Grid.Column="0" Keyboard="Numeric" Text="{Binding MaleCount}" TextChanged="CountChanged" x:Name="MaleCount" IsEnabled="{Binding IsEditable}"></Entry>
 
-                        <Label Text="Kommentar an Taxonexperten:" IsEnabled="{Binding IsEditable}"></Label>
+                            <Label Grid.Row="0" Grid.Column="1" Text="Anzahl Weibchen:" IsEnabled="{Binding IsEditable}"></Label>
+                            <Entry Grid.Row="1" Grid.Column="1" Keyboard="Numeric" Text="{Binding FemaleCount}" TextChanged="CountChanged" x:Name="FemaleCount" IsEnabled="{Binding IsEditable}"></Entry>
+                        </Grid>
+
+                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Anzahl &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <Entry Keyboard="Numeric" Text="{Binding TotalCount}" x:Name="TotalCount" IsEnabled="{Binding IsEditable}" TextChanged="CountChanged"></Entry>
+
+                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Bestimmungsmethode  &lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <Picker x:Name="DiagnosisTypePicker" HorizontalOptions="FillAndExpand" Title="" SelectedIndexChanged="OnDiagnosisTypePickerSelectedIndexChanged" TitleColor="{StaticResource senck_blue}">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type mvvm:DiagnosisTypeModel}" >
+                                        <mvvm:DiagnosisTypeModel Id="-1" Name="keine Auswahl" />
+                                        <mvvm:DiagnosisTypeModel Id="0" Name="Beobachtung lebend (ohne optische Hilfmittel)" />
+                                        <mvvm:DiagnosisTypeModel Id="1" Name="Beobachtung lebend (Foto/Lupe)" />
+                                        <mvvm:DiagnosisTypeModel Id="2" Name="Bestimmung lebend (Mikroskop)" />
+                                        <mvvm:DiagnosisTypeModel Id="3" Name="Bestimmung tot, äußere Merkmale (Mikroskop)" />
+                                        <mvvm:DiagnosisTypeModel Id="4" Name="Bestimmung tot, Präparation (Mikroskop)" />
+                                        <mvvm:DiagnosisTypeModel Id="5" Name="DNA-Untersuchung" />
+                                </x:Array>
+                            </Picker.ItemsSource>
+                            <Picker.ItemDisplayBinding>
+                                <Binding Path="Name" />
+                            </Picker.ItemDisplayBinding>
+                        </Picker>
+
+                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Kommentar an Taxonexpert*in &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Editor Text="{Binding HabitatDescription}" IsEnabled="{Binding IsEditable}" AutoSize="TextChanges"></Editor>
+
                         <dpd:ExtendedMap x:Name="map" HorizontalOptions="FillAndExpand" Tap="RecordMap_Tap" VerticalOptions="FillAndExpand" MapType="Hybrid" IsVisible="True" HeightRequest="300">
 
                         </dpd:ExtendedMap>
@@ -64,8 +110,8 @@
 							<Entry Grid.Column="3" Grid.Row="1" Text="{Binding Accuracy}" IsEnabled="False"></Entry>
 						</Grid>-->
                         <Grid>
-                            <Button Text="Bild aufnehmen" FontSize="Small" BorderWidth="1" BorderColor="{x:StaticResource senck_brown}" TextColor="{x:StaticResource senck_green}" Grid.Column="0" Command="{Binding TakePhotoCommand}" IsEnabled="{Binding IsEditable}"></Button>
-                            <Button Text="Bild auswählen" FontSize="Small" BorderWidth="1" BorderColor="{x:StaticResource senck_brown}" TextColor="{x:StaticResource senck_green}" Grid.Column="1" Command="{Binding SelectPhotoCommand}" IsEnabled="{Binding IsEditable}"></Button>
+                            <Button Text="Bild aufnehmen" FontSize="Small" BorderWidth="1" BorderColor="{x:StaticResource senck_brown}" TextColor="{x:StaticResource senck_blue}" Grid.Column="0" Command="{Binding TakePhotoCommand}" IsEnabled="{Binding IsEditable}"></Button>
+                            <Button Text="Bild auswählen" FontSize="Small" BorderWidth="1" BorderColor="{x:StaticResource senck_brown}" TextColor="{x:StaticResource senck_blue}" Grid.Column="1" Command="{Binding SelectPhotoCommand}" IsEnabled="{Binding IsEditable}"></Button>
                         </Grid>
                     </StackLayout>
                     <StackLayout VerticalOptions="EndAndExpand" HeightRequest="{Binding MediaHeight}">
@@ -80,7 +126,12 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Label Grid.Column="0" Text="{Binding Path,Converter={conv:MediaFileToFilenameConverter}}" HorizontalOptions="Center" VerticalOptions="Center" IsEnabled="{Binding Path=BindingContext.IsEditable, Source={x:Reference RecordEditView}}"></Label>
-                                            <dpd:IconLabel Grid.Column="1" Icon="Delete" FontSize="Large" VerticalOptions="CenterAndExpand" WidthRequest="24" IsEnabled="{Binding Path=BindingContext.IsEditable, Source={x:Reference RecordEditView}}">
+                                            <dpd:IconLabel Grid.Column="1"
+                                                           Icon="Delete"
+                                                           FontSize="Large"
+                                                           VerticalOptions="CenterAndExpand"
+                                                           WidthRequest="24"
+                                                           IsVisible="{Binding Path=BindingContext.IsSynced, Source={x:Reference RecordEditView}}" IsEnabled="{Binding Path=BindingContext.IsEditable, Source={x:Reference RecordEditView}}">
                                                 <dpd:IconLabel.GestureRecognizers>
                                                     <TapGestureRecognizer Command="{Binding Path=BindingContext.RemoveMediaCommand, Source={x:Reference RecordEditView}}" CommandParameter="{Binding .}" NumberOfTapsRequired="1" />
                                                 </dpd:IconLabel.GestureRecognizers>
@@ -106,9 +157,15 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="als Entwurf speichern" FontSize="Medium"></Label>
-                <Switch Grid.Column="2" Grid.Row="0" x:Name="TemplateSwitch" Toggled="TemplateSwitch_Toggled" IsToggled="{Binding SaveAsTemplate,Mode=TwoWay}"></Switch>
-                <Button Text="Abbrechen" Grid.Column="0" Grid.Row="1" Command="{Binding DeleteRecordCommand}" x:Name="DeleteButton"></Button>
-                <Button Text="Speichern" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Clicked="SaveButton_Clicked" Command="{Binding SaveRecordCommand}" x:Name="SaveButton"></Button>
+                <Switch Grid.Column="2" Grid.Row="0" x:Name="TemplateSwitch" IsVisible="False" Toggled="TemplateSwitch_Toggled" IsToggled="{Binding SaveAsTemplate,Mode=TwoWay}"></Switch>
+                <Button Text="Abbrechen"
+                        BackgroundColor="{x:StaticResource font_light}"
+                        BorderColor="{x:StaticResource senck_blue}"
+                        TextColor="{x:StaticResource senck_blue}"
+                        Grid.Column="0" Grid.Row="1" Command="{Binding DeleteRecordCommand}" x:Name="DeleteButton"></Button>
+                <Button BackgroundColor="{x:StaticResource senck_blue}"
+                        TextColor="{x:StaticResource font_light}" 
+                        Text="Speichern" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" Clicked="SaveButton_Clicked" Command="{Binding SaveRecordCommand}" x:Name="SaveButton"></Button>
                 <Button Grid.Column="0" HorizontalOptions="FillAndExpand" Grid.ColumnSpan="3" FontSize="Small" VerticalOptions="FillAndExpand" Grid.Row="2" Text="Mehr auf BODENTIER hoch 4" TextColor="{StaticResource notquitewhite}" BackgroundColor="{StaticResource senck_brown}" Command="{Binding NavigateToWebCommand}" CommandParameter="{Binding SelectedTaxon}"></Button>
             </Grid>
         </StackLayout>

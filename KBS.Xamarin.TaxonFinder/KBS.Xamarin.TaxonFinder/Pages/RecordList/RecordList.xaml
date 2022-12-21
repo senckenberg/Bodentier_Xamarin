@@ -54,36 +54,52 @@
 									<ColumnDefinition Width="2*"></ColumnDefinition>
 								</Grid.ColumnDefinitions>
 								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"></RowDefinition>
-									<RowDefinition Height="33"></RowDefinition>
+									<RowDefinition Height="25"></RowDefinition>
+									<RowDefinition Height="25"></RowDefinition>
+									<RowDefinition Height="25"></RowDefinition>
 								</Grid.RowDefinitions>
-								<StackLayout Grid.Column="0" Grid.Row="0" Margin="10,0,0,0">
-									<Label Text="{Binding TaxonId, Converter={conv:TaxonIdToTaxonNameConverter}}" FontAttributes="Bold" FontSize="Small"></Label>
+								<StackLayout Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="5,5,0,0">
+									<Label Text="{Binding TaxonId, Converter={conv:TaxonIdToTaxonNameConverter}}" TextColor="{Binding TaxonId, Converter={conv:TaxonIdToColorConverter}}" FontAttributes="Bold" FontSize="Small"></Label>
 								</StackLayout>
-								<StackLayout Grid.Column="1" Grid.Row="0" >
+                                <StackLayout Grid.Column="0"
+                                             Grid.Row="1"
+                                             Margin="5,0,0,0">
 									<Label Text="{Binding RecordDate, StringFormat='{}{0:dd.MM.yyyy}'}" FontSize="Small"></Label>
 								</StackLayout>
-								<StackLayout Grid.Column="2" Grid.Row="0" >
+								<StackLayout Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" >
 									<Label Text="{Binding HabitatName}" FontSize="Small"></Label>
 								</StackLayout>
-                                <StackLayout Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" IsVisible="{Binding HabitatDescription, Converter={conv:EmptyStringToBoolConverter}}">
-									<Label Text="{Binding HabitatDescription}" FontAttributes="Italic" FontSize="Micro" LineBreakMode="TailTruncation" Margin="10,0"></Label>
+                                <StackLayout Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" IsVisible="{Binding HabitatDescription, Converter={conv:EmptyStringToBoolConverter}}">
+									<Label Text="{Binding HabitatDescription}" FontAttributes="Italic" FontSize="Small" LineBreakMode="TailTruncation" Margin="5,0"></Label>
 								</StackLayout>
-								<StackLayout Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Padding="0,0,10,0">
+                                <StackLayout Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Padding="0,0,10,0" Margin="0,5,0,0">
 									<StackLayout.GestureRecognizers>
 										<TapGestureRecognizer Command="{Binding Path=BindingContext.CopyCommand, Source={x:Reference RecordListView}}" CommandParameter="{Binding LocalRecordId}"/>
 									</StackLayout.GestureRecognizers>
-									<dpd:IconLabel Icon="Plus" FontSize="Large" TextColor="{x:StaticResource senck_brown}"></dpd:IconLabel>
+                                    <dpd:IconLabel Icon="Plus" FontSize="Large" TextColor="{x:StaticResource senck_blue}" IsVisible="{Binding TaxonId, Converter={conv:TaxonIdToVisibilityConverter}}"></dpd:IconLabel>
 								</StackLayout>
 							</Grid>
 						</ViewCell>
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
-			<StackLayout Padding="10">
+			<StackLayout Padding="10" BackgroundColor="White">
 				<ActivityIndicator IsRunning="{Binding IsBusy}" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsBusy}"></ActivityIndicator>
 				<Label Text="{Binding Result}" VerticalOptions="EndAndExpand" HorizontalTextAlignment="Center" HorizontalOptions="Center" FontSize="Large" x:Name="ResultLabel" IsVisible="{Binding Result, Converter={conv:EmptyStringToBoolConverter}}"></Label>
-				<Button VerticalOptions="EndAndExpand" Text="{Binding SyncButtonText}" Command="{Binding SaveTaxaCommand}" Clicked="SyncButton_Clicked" x:Name="SyncButton" TextColor="{x:StaticResource senck_green}" IsVisible="{Binding ShowSyncButton}" ></Button>
+				<Button VerticalOptions="EndAndExpand" Text="{Binding SyncButtonText}" Command="{Binding SaveTaxaCommand}" Clicked="SyncButton_Clicked" x:Name="SyncButton" BackgroundColor="{x:StaticResource senck_blue}" TextColor="{x:StaticResource font_light}" IsVisible="False" ></Button>
+                <Button VerticalOptions="EndAndExpand"
+                        Text="Zur Anmeldung"
+                        Command="{Binding GoToLoginCommand}"
+                        BackgroundColor="{x:StaticResource senck_blue}"
+                        TextColor="{x:StaticResource font_light}"
+                        IsVisible="{Binding Unauthorized}"></Button>
+                <Button VerticalOptions="EndAndExpand"
+                        Text="{Binding SyncButtonText}"
+                        Command="{Binding SyncAdvicesCommand}"
+                        x:Name="SyncAdvicesButton"
+                        BackgroundColor="{x:StaticResource senck_blue}"
+                        IsVisible="{Binding ShowSyncButton}"
+                        TextColor="{x:StaticResource font_light}"></Button>
                 <Button HorizontalOptions="FillAndExpand" FontSize="Small" VerticalOptions="FillAndExpand" Text="Mehr auf BODENTIER hoch 4" TextColor="{StaticResource notquitewhite}" BackgroundColor="{StaticResource senck_brown}" Command="{Binding NavigateToWebCommand}" CommandParameter="{Binding SelectedTaxon}"></Button>
             </StackLayout>
 		</StackLayout>

@@ -1,0 +1,65 @@
+[
+  {
+    "TutorialitemId": 1,
+    "ImageSource": "tutorial_01.png",
+    "Index": 1,
+    "Title": "Willkommen bei BODENTIER hoch 4!",
+    "Description": "<p>Es folgt ein kurzer Überblick über die Hauptfunktionen der App<p>"
+  },
+  {
+    "TutorialitemId": 2,
+    "ImageSource": "tutorial_02.png",
+    "Index": 2,
+    "Title": "ERKENNEN",
+    "Description": "<p>Du hast ein Bodentier gefunden und möchtest wissen zu welcher Großgruppe es gehört?<p><p>Das gelingt dir über die Funktion BODENTIERE ALLGEMEIN BESTIMMEN.</p>"
+  },
+  {
+    "TutorialitemId": 3,
+    "ImageSource": "tutorial_03.png",
+    "Index": 3,
+    "Title": "ERKENNEN",
+    "Description": "Du bist dir bereits sicher, dass es sich bei dem beobachteten Tier um eine Art der Landasseln, Doppelfüsser oder Hundertfüsser handelt? Für diese Tiergruppen bietet BODENTIER hoch 4 die Möglichkeit auch Großgruppe und Art über die Funktion  DOPPELFÜSSER, HUNDERTFÜSSER UND LANDASSELN  BESTIMMEN genauer zu bestimmen.​"
+  },
+  {
+    "TutorialitemId": 4,
+    "ImageSource": "tutorial_04.png",
+    "Index": 4,
+    "Title": "ERKENNEN",
+    "Description": "Du bist unterwegs und hast höchstens eine Lupe bei Dir? Orientiere dich vor allem an den Merkmalen, die mit grün unterlegt sind. Wenn du etwas mehr Zeit und bessere optische Hilfsmittel zur Verfügung hast, kannst du dich auch an die gelb unterlegten Merkmale heranwagen"
+  },
+  {
+    "TutorialitemId": 5,
+    "ImageSource": "tutorial_05.png",
+    "Index": 5,
+    "Title": "ERKENNEN",
+    "Description": "Bei allen Merkmalen ist eine Mehrfachauswahl möglich. Kannst du dich also nicht zwischen zwei Merkmalsausprägungen entscheiden, wähle einfach beide aus."
+  },
+  {
+    "TutorialitemId": 6,
+    "ImageSource": "tutorial_06.png",
+    "Index": 6,
+    "Title": "ERLEBEN",
+    "Description": "Du möchtest mehr über eine Art erfahren? Browse durch die ARTENSTECKBRIEFE und informiere dich über Eigenschaften wie Verbreitung und Ökologie der 260 heimischen Landassel-, Doppelfüßer-, und Hundertfüßer Arten.​"
+  },
+  {
+    "TutorialitemId": 7,
+    "ImageSource": "tutorial_07.png",
+    "Index": 7,
+    "Title": "ERFASSEN",
+    "Description": "Du bist unterwegs und möchtest deine Beobachtungen festhalten? Dokumentiere deine Funde mit Ort, Zeit und (sehr hilfreich für eine spätere Validierung!) Belegfotos innerhalb deiner persönlichen FUNDLISTE."
+  },
+  {
+    "TutorialitemId": 8,
+    "ImageSource": "tutorial_08.png",
+    "Index": 8,
+    "Title": "ERFORSCHEN",
+    "Description": "Du möchtest zusätzlich einen Beitrag zur Erforschung von Bodentieren leisten? ​Übertrage deine Daten über die Funktion FUND SYNCHRONISIEREN zunächst an das Webportal von BODENTIERhoch4 und von dort aus an die Forschungsdatenbank „edaphobase“."
+  },
+  {
+    "TutorialitemId": 9,
+    "ImageSource": "tutorial_09.png",
+    "Index": 9,
+    "Title": "ZUFRIEDEN?",
+    "Description": "Die App befindet sich momentan noch in der Pilot-Phase. Jede Rückmeldung von Dir hilft uns App-Navigation und Bestimmungsschlüssel noch intuitiver und nutzerfreundlicher gestalten zu können. Nutze hierfür die FEEDBACK Funktion."
+  },
+]

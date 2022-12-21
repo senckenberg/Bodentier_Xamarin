@@ -3,8 +3,10 @@ using KBS.App.TaxonFinder.Services;
 using Plugin.Media.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -13,6 +15,43 @@ namespace KBS.App.TaxonFinder.iOS.Services
 {
     public class FileHelper : IFileHelper
 	{
+		public bool AcceptAllCertifications(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certification, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+		{
+			return true;
+		}
+
+		public bool RemoteFileExists(string url)
+		{
+			ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
+			bool result = false;
+
+			WebRequest webRequest = WebRequest.Create(url);
+			webRequest.Timeout = 1200; // miliseconds
+			webRequest.Method = "HEAD";
+
+			HttpWebResponse response = null;
+
+			try
+			{
+				response = (HttpWebResponse)webRequest.GetResponse();
+				result = true;
+			}
+			catch (WebException webException)
+			{
+				Debug.WriteLine(url + " doesn't exist: " + webException.Message);
+			}
+			finally
+			{
+				if (response != null)
+				{
+					response.Close();
+				}
+			}
+
+			return result;
+		}
+
+
 		public bool FileExists(string filename)
 		{
 			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), filename);
@@ -103,6 +142,11 @@ namespace KBS.App.TaxonFinder.iOS.Services
 			return Convert.ToBase64String(b);
 		}
 
+		public byte[] GetBytesFromBase64String(string base64String)
+		{
+			return Convert.FromBase64String(base64String);
+		}
+
 		public byte[] DownloadFile(string uri)
 		{
 			byte[] result;
@@ -115,9 +159,27 @@ namespace KBS.App.TaxonFinder.iOS.Services
 		public async Task<byte[]> DownloadFileAsync(string uri)
 		{
 			byte[] result;
-			using (WebClient client = new WebClient())
+			try
 			{
-				result = await client.DownloadDataTaskAsync(new Uri(uri));
+				var handler = new HttpClientHandler()
+				{
+					ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+					MaxRequestContentBufferSize = 256000,
+				};
+				HttpClient client = new HttpClient(handler);
+				var response = await client.GetAsync(uri);
+				result = response.Content.ReadAsByteArrayAsync().Result;
+				/**
+                using (CertificateWebClient client = new CertificateWebClient())
+                {
+                    result = await client.DownloadDataTaskAsync(new Uri(uri));
+                }
+                **/
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex.Message);
+				return null;
 			}
 			return result;
 		}
@@ -126,6 +188,5 @@ namespace KBS.App.TaxonFinder.iOS.Services
 		{
 			File.Delete(file);
 		}
-
-	}
+    }
 }

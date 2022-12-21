@@ -2,13 +2,22 @@
 	<PropertyGroup Label="Globals">
 	  <SccProjectName>%24/Apps/Bodentier/KBS.Xamarin.TaxonFinder/KBS.Xamarin.TaxonFinder</SccProjectName>
 	  <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
-	  <SccAuxPath>http://tfs2013:8080/tfs/naturkundeprojekte</SccAuxPath>
+	  <SccAuxPath>https://tfs2013.kbs-leipzig.de/naturkundeprojekte</SccAuxPath>
 	  <SccLocalPath>.</SccLocalPath>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="Resources - Kopie\**" />
+	  <EmbeddedResource Remove="Resources - Kopie\**" />
+	  <None Remove="Resources - Kopie\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Resources\OrderSelectionTaxa.json" />
+	  <None Remove="Resources\TutorialItems.json" />
+	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Images\Ident\ident_blank.png" />
 	  <EmbeddedResource Include="Images\Ident\ident_green.png" />
@@ -20,23 +29,44 @@
 	  <EmbeddedResource Include="Images\Ident\ident_yellow.png" />
 	  <EmbeddedResource Include="Images\Ident\ident_yellow_r.png" />
 	  <EmbeddedResource Include="Images\General\ina.jpg" />
-	  <EmbeddedResource Include="Resources\Taxa.json" />
-	  <EmbeddedResource Include="Resources\TaxonFilterItems.json" />
-	  <EmbeddedResource Include="Resources\TaxonTagFilterFilterGroups.json" />
-	  <EmbeddedResource Include="Resources\TaxonImages.json" />
-	  <EmbeddedResource Include="Resources\TaxonImageTypes.json" />
-	  <EmbeddedResource Include="Resources\TaxonProtectionClasses.json" />
-	  <EmbeddedResource Include="Resources\TaxonSynonyms.json" />
+	  <EmbeddedResource Include="Resources\OrderSelectionTaxa.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\Taxa.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonFilterItems.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TutorialItems.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonTagFilterFilterGroups.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonImages.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonImageTypes.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonProtectionClasses.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	  <EmbeddedResource Include="Resources\TaxonSynonyms.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="Resources\Versions.json" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Microsoft.NETCore.Platforms" Version="3.1.3" />
+		<PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.5" />
+		<PackageReference Include="NavigationSam" Version="2.1.1" />
 		<PackageReference Include="NETStandard.Library" Version="2.0.3" />
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Plugin.AudioRecorder" Version="1.1.0" />
-		<PackageReference Include="Plugin.Permissions" Version="3.0.0.12" />
-		<PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
+		<PackageReference Include="Plugin.Permissions" Version="6.0.1" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 		<PackageReference Include="System.Collections" Version="4.3.0" />
 		<PackageReference Include="System.ComponentModel" Version="4.3.0" />
 		<PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
@@ -63,11 +93,10 @@
 		<PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
 		<PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
 		<PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
-		<PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.4.0" />
-		<PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
-		<PackageReference Include="Xamarin.Forms" Version="4.8.0.1560" />
-		<PackageReference Include="Xamarin.Forms.Maps" Version="4.8.0.1560" />
-		<PackageReference Include="Xamarin.Plugin.FilePicker" Version="2.1.41" />
+		<PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.6.0" />
+		<PackageReference Include="Xamarin.Essentials" Version="1.7.3" />
+		<PackageReference Include="Xamarin.Forms" Version="5.0.0.2515" />
+		<PackageReference Include="Xamarin.Forms.Maps" Version="5.0.0.2515" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Properties\" />
@@ -76,5 +105,27 @@
 	  <Reference Include="Mono.Android">
 	    <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\MonoAndroid\v10.0\Mono.Android.dll</HintPath>
 	  </Reference>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Pages\FilterSelectionV2\FilterSelectionV2.xaml.cs">
+	    <DependentUpon>FilterSelectionV2.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\OrderSelectionDetail\OrderSelectionDetail.xaml.cs">
+	    <DependentUpon>OrderSelectionDetail.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\Tutorial\Tutorial.xaml.cs">
+	    <DependentUpon>Tutorial.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Styles\LargeDevicesStyle.xaml.cs">
+	    <DependentUpon>LargeDevicesStyle.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Styles\SmallDevicesStyle.xaml.cs">
+	    <DependentUpon>SmallDevicesStyle.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Styles\SmallDevicesStyle.xaml">
+	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	  </EmbeddedResource>
 	</ItemGroup>
 </Project>

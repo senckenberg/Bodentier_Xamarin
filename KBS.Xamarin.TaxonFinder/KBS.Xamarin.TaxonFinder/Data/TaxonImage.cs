@@ -89,8 +89,8 @@ namespace KBS.App.TaxonFinder.Data
                 {
                     try
                     {
-                        var result = fileHelper.DownloadFile($"https://bodentierhochvier.de/wp-content/uploads/{fileName}");
-                        fileHelper.CopyFileToLocal(result, fileName);
+                        var result = fileHelper.DownloadFileAsync($"https://bodentierhochvier.de/wp-content/uploads/{fileName}");
+                        fileHelper.CopyFileToLocal(result.Result, fileName);
                     }
                     catch (Exception)
                     {

@@ -66,12 +66,15 @@ namespace KBS.App.TaxonFinder.Views
 			else
 			{
 				EmptyStack.IsVisible = true;
+				/*
 				RecordListViewModel.NewRecord = true;
+
 				RecordListViewModel.SyncButtonText = "Fundmeldung anlegen";
 				if (ResultLabel.Text == null)
 				{
 					RecordListViewModel.Result = "Du hast noch keine Funde zum Synchronisieren.";
 				}
+				*/
 			}
 		}
 
@@ -90,6 +93,12 @@ namespace KBS.App.TaxonFinder.Views
 		private void Help_Clicked(object sender, EventArgs e)
 		{
 			Navigation.PushAsync(new HelpPage(this));
+		}
+
+		protected override void OnAppearing()
+		{
+			RecordListViewModel.CheckLogin();
+			base.OnAppearing();
 		}
 	}
 }

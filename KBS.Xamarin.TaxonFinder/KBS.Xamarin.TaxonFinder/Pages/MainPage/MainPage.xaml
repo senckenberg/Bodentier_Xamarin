@@ -15,26 +15,104 @@
 		<ToolbarItem Text="Impressum" Order="Primary" Clicked="Help_Clicked" Icon="info.png"></ToolbarItem>
 	</ContentPage.ToolbarItems>
 
-	<ContentPage.Content>
-		<AbsoluteLayout>
-			<Image Source="background.png" Aspect="AspectFill" AbsoluteLayout.LayoutBounds="1,1,0.8,0.6" AbsoluteLayout.LayoutFlags="All" Opacity="0.4"></Image>
-			<ScrollView Padding="10" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-				<StackLayout VerticalOptions="FillAndExpand">
-					<StackLayout VerticalOptions="StartAndExpand">
-                        <Button x:Name ="OrderListButton" Text="Artsteckbriefe" Clicked="OrderListButton_Clicked"></Button>
-                        <Button x:Name="OrderSelectionButton" Text="Bestimmen" Clicked="OrderSelectionButton_Clicked"></Button>
-                        <Button x:Name ="AddRecordButton" Text="Fund melden" Clicked="AddRecordButton_Clicked"></Button>
-						<Button x:Name ="RecordListButton" Text="Fundliste" Clicked="RecordListButton_Clicked"></Button>
-						<Button x:Name ="UpdateButton" Text="Aktualisierung" Clicked="UpdateButton_Clicked"></Button>
-                        <Button x:Name ="RegisterButton" Text="Anmeldung" Clicked="RegisterButton_Clicked"></Button>
+    <ContentPage.Content>
+        <AbsoluteLayout VerticalOptions="FillAndExpand"
+                        AbsoluteLayout.LayoutBounds="0,0,1,1"
+                        AbsoluteLayout.LayoutFlags="All">
+            <Image Source="background.png"
+                   Aspect="AspectFill"
+                   AbsoluteLayout.LayoutBounds="1,1,0.8,0.6"
+                   AbsoluteLayout.LayoutFlags="All"
+                   Opacity="0.4"
+                   InputTransparent="True"></Image>
+            <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1"
+                         AbsoluteLayout.LayoutFlags="All" >
+                <ScrollView VerticalOptions="FillAndExpand">
+                    <StackLayout VerticalOptions="FillAndExpand"
+                                 HorizontalOptions="FillAndExpand"
+                                 >
+                        <StackLayout>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="OrderListButton"
+                                    Text="Artsteckbriefe"
+                                    Clicked="OrderListButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="OrderSelectionButton"
+                                    Text="Bestimmen"
+                                    Clicked="OrderSelectionButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="AddRecordButton"
+                                    Text="Fund melden"
+                                    Clicked="AddRecordButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="UpdateButton"
+                                    Text="Aktualisierung"
+                                    HorizontalOptions="FillAndExpand"
+                                    Clicked="UpdateButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="RecordListButton"
+                                    Text="Fundliste"
+                                    Clicked="RecordListButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    x:Name="RegisterButton"
+                                    Text="Anmeldung"
+                                    Clicked="RegisterButton_Clicked"></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    HorizontalOptions="FillAndExpand"
+                                    x:Name="FeedbackButton"
+                                    Text="Feedback"
+                                    Clicked="Feedback_Clicked"
+                                    ></Button>
+                            <Button Style="{x:StaticResource MainButtonStyle}"
+                                    HorizontalOptions="FillAndExpand"
+                                    x:Name="TutorialButton"
+                                    Text="Tutorial"
+                                    Clicked="Tutorial_Clicked"
+                                    ></Button>
+                        </StackLayout>
                     </StackLayout>
-					<StackLayout VerticalOptions="EndAndExpand" x:Name="HintStack" IsVisible="{Binding ActionNecessary}">
-						<Label x:Name="HintLabel" Text="{Binding HintLabelText}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"></Label>
-						<Button x:Name="HintButton" Text="{Binding HintButtonText}" Command="{Binding GetToHintCommand}" Margin="0"></Button>
-					</StackLayout>
-					<Label HorizontalTextAlignment="Center" TextColor="Gray" x:Name="VersionLabel"></Label>
-				</StackLayout>
-			</ScrollView>
-		</AbsoluteLayout>
+                </ScrollView>
+                <StackLayout Margin="0"
+                             AbsoluteLayout.LayoutBounds="0.5,1,1,0.2"
+                             AbsoluteLayout.LayoutFlags="All"
+                             HorizontalOptions="FillAndExpand"
+                             BackgroundColor="{x:StaticResource notquitewhite}"
+                             Padding="{OnIdiom '0,0,0,45',Tablet='0,0,0,45', Phone='0,0,0,45'}"
+                             IsVisible="{Binding ActionNecessary}">
+                    <BoxView HeightRequest="2"
+                             BackgroundColor="{x:StaticResource senck_green}"></BoxView>
+                    <StackLayout Orientation="Vertical"
+                                 Spacing="0"
+                                 HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="EndAndExpand"
+                                 x:Name="HintStack"
+                                 IsVisible="{Binding ActionNecessary}">
+                        <Label x:Name="HintLabel"
+                               Text="{Binding HintLabelText}"
+                               FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
+                               HorizontalOptions="CenterAndExpand"
+                               Margin="{OnIdiom '0,0,0,0', Phone='0,0,0,0', Tablet='0,5,0,5'}"
+                               HorizontalTextAlignment="Center"></Label>
+                        <Button x:Name="HintButton"
+                                BackgroundColor="{x:StaticResource senck_blue}"
+                                TextColor="White"
+                                Margin="{OnIdiom '0,0,0,0', Phone='0,0,0,0', Tablet='0,10,0,15'}"
+                                FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
+                                Text="{Binding HintButtonText}"
+                                Command="{Binding GetToHintCommand}"
+                                Scale="{OnIdiom '1', Phone='0.8', Tablet='1'}"></Button>
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+            <Label HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center"
+                   AbsoluteLayout.LayoutBounds="{OnIdiom '0.5,1,1,0.05',Tablet='0.5,1,1,0.05', Phone='0.5,1,1,0.05'}"
+                   AbsoluteLayout.LayoutFlags="All"
+                   Padding="{OnIdiom '0,0', Tablet='5,5', Phone='0,1'}"
+                   BackgroundColor="{x:StaticResource notquitewhite}"
+                   TextColor="{x:StaticResource font_dark}"
+                   Opacity="0.8"                   
+                   x:Name="VersionLabel"></Label>
+        </AbsoluteLayout>
 	</ContentPage.Content>
 </ContentPage>

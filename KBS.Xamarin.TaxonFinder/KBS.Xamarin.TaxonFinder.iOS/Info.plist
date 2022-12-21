@@ -25,10 +25,6 @@
 	<string>com.kbs.idoapp</string>
 	<key>CFBundleIconFiles</key>
 	<array/>
-	<key>NSCameraUsageDescription</key>
-	<string>Zum Aufnehmen von Fotos wird die Kamera-Berechtigung benötigt.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Zum Auswählen von Fotos wird die Foto-Berechtigung benötigt.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Zum automatischen Feststellen des Fundorts wird die Standort-Berechtigung benötigt.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -62,9 +58,15 @@
 	<string>Light</string>
 	<key>CFBundleDisplayName</key>
 	<string>Bodentier hoch 4</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Zum Aufnehmen von Fotos wird die Kamera-Berechtigung benötigt. Damit sollen Fotos zu Fundmeldungen hinzugefügt werden und gespeichert werden.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Zum Auswählen von Fotos wird die Foto-Berechtigung benötigt. Damit sollen Fotos zu Fundmeldungen hinzugefügt werden und gespeichert werden. </string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>CFBundleVersion</key>
-	<string>1.0.1</string>
+	<string>1.9.9</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.9.9</string>
 </dict>
 </plist>

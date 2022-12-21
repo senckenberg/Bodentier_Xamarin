@@ -23,6 +23,7 @@ namespace KBS.App.TaxonFinder.Data
         private static readonly string assemblyName = assembly.GetName().Name;
         public ImageSource InaString
         {
+
             get
             {
                 return ImageSource.FromResource($"{assemblyName}.Images.General.ina.jpg");
@@ -48,15 +49,16 @@ namespace KBS.App.TaxonFinder.Data
         public int? MaxValue { get; set; }
         public int TaxonId { get; set; }
         public int? VisibilityCategoryId { get; set; }
+        public int OrderPriority { get; set; }
         public List<int> TaxonHits { get; set; }
         public bool CombineSubOptions { get; set; }
         public int? MaximalCombinations { get; set; }
         public List<string> ListSourceJson { get; set; }
         public FilterItem ParentItem { get; set; }
         public List<TaxonFilterItem> TaxonFilterItems { get; set; }
-        public int MatchingTaxonCount(List<int> taxonIds)
+        public int MatchingTaxonCount(List<int> taxonIds, bool initCalc)
         {
-            if (_filterChanged)
+            if (_filterChanged || initCalc)
             {
 
                 _matchingTaxonCount = TaxonFilterItem.GetMatchingTaxon(SelectedItems.ToList(), ((App)App.Current).TaxonFilterItems, ValueFilterDictionary, taxonIds).Count;
@@ -91,19 +93,19 @@ namespace KBS.App.TaxonFinder.Data
                 //Toplevel
                 var tFilterItems = Load.FromFile<TaxonFilterItem>("TaxonFilterItems.json");
 
-                var topLevelFilterItems = tFilterItems.Select(tfi => new { tfi.TagParentId, tfi.TagParentName, tfi.KeyDataType, tfi.VisibilityCategoryId }).Distinct();
+                var topLevelFilterItems = tFilterItems.Select(tfi => new { tfi.TagParentId, tfi.TagParentName, tfi.KeyDataType, tfi.VisibilityCategoryId, tfi.OrderPriority }).Distinct();
                 foreach (var tfi in topLevelFilterItems)
                 {
                     if (tfi.KeyDataType != "UNKNOWN" && tfi.KeyDataType != "PIC")
                     {
-                        mainItem.SubOptions.Add(new FilterItem { TagId = tfi.TagParentId, OptionText = tfi.TagParentName, KeyDataType = tfi.KeyDataType, VisibilityCategoryId = tfi.VisibilityCategoryId, CombineSubOptions = true, ParentItem = mainItem });
+                        mainItem.SubOptions.Add(new FilterItem { TagId = tfi.TagParentId, OptionText = tfi.TagParentName, KeyDataType = tfi.KeyDataType, VisibilityCategoryId = tfi.VisibilityCategoryId, OrderPriority=tfi. OrderPriority, CombineSubOptions = true, ParentItem = mainItem });
                     }
                 }
 
                 //Level 2
                 //var templist = Newtonsoft.Json.JsonConvert.DeserializeObject(tFilterItems);
                 var idValueListValue = tFilterItems.Where(t => t.KeyDataType == "VALUE").Select(tfi => new { tfi.TagId, tfi.ListSourceJson, tfi.VisibilityCategoryId, tfi.TagValue, tfi.KeyDataType, tfi.TagParentId, tfi.MinValue, tfi.MaxValue, tfi.TaxonId, tfi.TaxonHits });
-                var idValueList = tFilterItems.Where(t => t.KeyDataType == "VALUELIST").Select(tfi => new { tfi.TagId, tfi.ListSourceJson, tfi.VisibilityCategoryId, tfi.TagValue, tfi.KeyDataType, tfi.TagParentId, tfi.MinValue, tfi.MaxValue, tfi.TaxonId, tfi.TaxonHits }).GroupBy(tfi => tfi.TagId);
+                var idValueList = tFilterItems.Where(t => t.KeyDataType == "VALUELIST").Select(tfi => new { tfi.TagId, tfi.ListSourceJson, tfi.VisibilityCategoryId, tfi.TagValue, tfi.KeyDataType, tfi.TagParentId, tfi.MinValue, tfi.MaxValue, tfi.TaxonId, tfi.TaxonHits, tfi.OrderPriority }).GroupBy(tfi => tfi.TagId);
                 var distinctIdValueList = idValueList.Distinct().ToList();
                 var distinctIdValueListValue = idValueListValue.Distinct().ToList();
                 foreach (var tfi2 in distinctIdValueList)
@@ -122,7 +124,8 @@ namespace KBS.App.TaxonFinder.Data
                             ParentItem = _currentItem,
                             TaxonId = tfi2.First().TaxonId,
                             TaxonHits = tfi2.First().TaxonHits,
-                            VisibilityCategoryId = tfi2.First().VisibilityCategoryId
+                            VisibilityCategoryId = tfi2.First().VisibilityCategoryId,
+                            OrderPriority = tfi2.First().OrderPriority
                         });
                 }
                 foreach (var tfi2 in distinctIdValueListValue)
