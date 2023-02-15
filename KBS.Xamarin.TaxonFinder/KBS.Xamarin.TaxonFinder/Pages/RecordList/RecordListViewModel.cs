@@ -46,6 +46,10 @@ namespace KBS.App.TaxonFinder.ViewModels
         public bool NewRecord { get; set; }
         public bool ShowSyncButton { get; set; }
         public bool EnableSearch { get; set; }
+        private string _taxonNameSafe;
+        public string TaxonNameSafe { get { return _taxonNameSafe; } set { _taxonNameSafe = value; OnPropertyChanged(TaxonNameSafe); } }
+
+
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -337,7 +341,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                 OnPropertyChanged(nameof(Unauthorized));
                 OnPropertyChanged(nameof(ShowSyncButton));
             }
-            else {
+            else
+            {
                 Unauthorized = false;
                 ShowSyncButton = true;
                 Result = "";

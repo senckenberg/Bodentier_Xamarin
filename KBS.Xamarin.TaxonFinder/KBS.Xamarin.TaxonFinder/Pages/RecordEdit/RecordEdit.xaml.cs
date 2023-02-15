@@ -18,6 +18,7 @@ using PermissionStatus = Plugin.Permissions.Abstractions.PermissionStatus;
 using Position = Xamarin.Forms.Maps.Position;
 using Application = Xamarin.Forms.Application;
 using ListView = Xamarin.Forms.ListView;
+using Xamarin.Forms.Internals;
 
 namespace KBS.App.TaxonFinder.Views
 {
@@ -60,6 +61,7 @@ namespace KBS.App.TaxonFinder.Views
             {
                 RecordEditViewModel.TaxonId = taxonId;
                 var taxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == taxonId);
+                RecordEditViewModel.TaxonGuid = taxon.Identifier.ToString();
                 //TaxonNameLabel.Text = taxon != null ? taxon.LocalName : "Unbekannte Art";
 
             }
@@ -102,7 +104,7 @@ namespace KBS.App.TaxonFinder.Views
             //LoadDiagnosisTypePicker();
 
             RecordEditViewModel.SelectedRecordId = localRecordId;
-            var taxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == taxonId);
+            var taxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(RecordEditViewModel.TaxonGuid));
             OnPropertyChanged(nameof(RecordEditViewModel.TaxonId));
             OnPropertyChanged(nameof(RecordEditViewModel.TaxonName));
             //TaxonNameLabel.Text = taxon != null ? taxon.LocalName : "Unbekannte Art";
@@ -131,9 +133,9 @@ namespace KBS.App.TaxonFinder.Views
 
         public void UpdateTaxonPicker()
         {
-            if (RecordEditViewModel.TaxonId != null)
+            if (RecordEditViewModel.TaxonGuid != null)
             {
-                var ix = RecordEditViewModel.TaxonPickerItemsSource.Select(tx => tx.TaxonId).ToList().IndexOf((int)RecordEditViewModel.TaxonId);
+                var ix = RecordEditViewModel.TaxonPickerItemsSource.Select(tx => tx.Identifier).ToList().IndexOf(Guid.Parse(RecordEditViewModel.TaxonGuid));
                 TaxonPicker.SelectedIndex = ix;
             }
         }
@@ -245,9 +247,10 @@ namespace KBS.App.TaxonFinder.Views
 
         public async void SetTaxonPicker()
         {
-            if (RecordEditViewModel.TaxonId != null)
+            if (RecordEditViewModel.TaxonGuid != null)
             {
-                var ix = RecordEditViewModel.TaxonPickerItemsSource.Select(taxonPickerI => taxonPickerI.TaxonId).ToList().IndexOf((int)RecordEditViewModel.TaxonId);
+
+                var ix = RecordEditViewModel.TaxonPickerItemsSource.Select(taxonPickerI => taxonPickerI.Identifier).ToList().IndexOf(Guid.Parse(RecordEditViewModel.TaxonGuid.ToString()));
                 TaxonPicker.SelectedIndex = ix;
             }
         }
@@ -264,6 +267,7 @@ namespace KBS.App.TaxonFinder.Views
                 if (result.TaxonId != 0)
                 {
                     RecordEditViewModel.TaxonId = result.TaxonId;
+                    RecordEditViewModel.TaxonGuid = result.Identifier.ToString();
                 }
                 else
                 {

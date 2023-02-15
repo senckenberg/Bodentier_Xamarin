@@ -64,9 +64,9 @@
 	<string>Zum Auswählen von Fotos wird die Foto-Berechtigung benötigt. Damit sollen Fotos zu Fundmeldungen hinzugefügt werden und gespeichert werden. </string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
-	<key>CFBundleVersion</key>
-	<string>1.9.9</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9.9</string>
+	<string>2.0.2</string>
+	<key>CFBundleVersion</key>
+	<string>2.0.2</string>
 </dict>
 </plist>

@@ -160,6 +160,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 LocalRecordId = value;
                 IsEditable = _selectedRecord.IsEditable;
                 TaxonId = _selectedRecord.TaxonId;
+                TaxonGuid = _selectedRecord.TaxonGuid;
                 CreationDate = _selectedRecord.CreationDate;
                 Identifier = _selectedRecord.Identifier;
                 RecordDate = _selectedRecord.RecordDate;
@@ -391,11 +392,12 @@ namespace KBS.App.TaxonFinder.ViewModels
             (Position != PositionOption.Pin && PositionList.Count != 0)
             && !String.IsNullOrEmpty(ReportedByName)) && TaxonId >= -1 && !string.IsNullOrEmpty(HabitatDescription))
             {
-                Taxon tempTax = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(TaxonId));
+                Taxon tempTax = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(TaxonGuid));
 
                 var recordModel = new RecordModel
                 {
-                    TaxonId = TaxonId,
+                    TaxonId = tempTax.TaxonId,
+                    TaxonGuid = tempTax.Identifier.ToString(),
                     CreationDate = DateTime.Now,
                     Identifier = String.IsNullOrEmpty(Identifier) ? Guid.NewGuid().ToString() : Identifier,
                     IsSynced = false,
@@ -671,14 +673,15 @@ namespace KBS.App.TaxonFinder.ViewModels
                 baseString = fileHelper.GetBase64FromImagePath(media.Path);
                 baseList.Add(new AdviceImageJsonItem(baseString, media.Path));
             }
-            var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(_selectedRecord.TaxonId));
+            var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(_selectedRecord.TaxonGuid.ToString()));
             var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
 
             AdviceJsonItem adviceJsonItem = new AdviceJsonItem
             {
                 AdviceId = _selectedRecord.LocalRecordId,
                 Identifier = Guid.Parse(_selectedRecord.Identifier),
-                TaxonId = _selectedRecord.TaxonId,
+                TaxonId = tempTaxon.TaxonId,
+                TaxonGuid = _selectedRecord.TaxonGuid,
                 TaxonFullName = taxonName,
                 AdviceDate = _selectedRecord.RecordDate,
                 AdviceCount = _selectedRecord.TotalCount,
@@ -744,7 +747,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                         Trace.WriteLine(ex);
                     }
                 }
-                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(rm.TaxonId));
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(rm.TaxonGuid));
 
                 if (tempTaxon == null)
                 {
@@ -755,7 +758,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 {
                     GlobalAdviceId = rm.GlobalAdviceId,
                     Identifier = Guid.Parse(rm.Identifier),
-                    TaxonId = rm.TaxonId,
+                    TaxonId = tempTaxon.TaxonId,
                     TaxonFullName = tempTaxon.TaxonName,
                     TaxonGuid = tempTaxon.Identifier,
                     AdviceDate = rm.RecordDate,
@@ -805,15 +808,15 @@ namespace KBS.App.TaxonFinder.ViewModels
         {
             try
             {
-                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(ajis.TaxonId));
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(TaxonGuid));
                 var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
 
                 RecordModel rm = new RecordModel
                 {
                     GlobalAdviceId = ajis.GlobalAdviceId,
                     Identifier = ajis.Identifier.ToString(),
-                    TaxonId = ajis.TaxonId,
-                    TaxonGuid = ajis.TaxonGuid.ToString(),
+                    TaxonId = tempTaxon.TaxonId,
+                    TaxonGuid = tempTaxon.Identifier.ToString(),
                     RecordDate = (DateTime)ajis.AdviceDate,
                     TotalCount = (int)ajis.AdviceCount,
                     HabitatName = ajis.AdviceCity,

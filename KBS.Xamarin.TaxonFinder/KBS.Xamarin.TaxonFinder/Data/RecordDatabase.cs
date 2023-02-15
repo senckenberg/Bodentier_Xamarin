@@ -189,8 +189,8 @@ namespace KBS.App.TaxonFinder.Data
                         rm.RecordDate = (DateTime)ajis.AdviceDate;
                         rm.TotalCount = ajis.AdviceCount.HasValue? ajis.AdviceCount.Value:0;
                         rm.HabitatName = ajis.AdviceCity;
-                        rm.MaleCount = ajis.MaleCount;
-                        rm.FemaleCount = ajis.FemaleCount;
+                        rm.MaleCount = ajis.MaleCount.HasValue? ajis.MaleCount.Value:0;
+                        rm.FemaleCount = ajis.FemaleCount.HasValue ? ajis.FemaleCount.Value : 0;
                         rm.StateEgg = ajis.StateEgg;
                         rm.StateLarva = ajis.StateLarva;
                         rm.StateImago = ajis.StateImago;
@@ -235,10 +235,10 @@ namespace KBS.App.TaxonFinder.Data
                         rm.TaxonId = ajis.TaxonId;
                         rm.TaxonGuid = ajis.TaxonGuid.ToString();
                         rm.RecordDate = (DateTime)ajis.AdviceDate;
-                        rm.TotalCount = (int)ajis.AdviceCount;
+                        rm.TotalCount = ajis.AdviceCount.HasValue? ajis.AdviceCount.Value:0;
                         rm.HabitatName = ajis.AdviceCity;
-                        rm.MaleCount = (int)ajis.MaleCount;
-                        rm.FemaleCount = (int)ajis.FemaleCount;
+                        rm.MaleCount = ajis.MaleCount.HasValue? ajis.MaleCount.Value:0;
+                        rm.FemaleCount = ajis.FemaleCount.HasValue? ajis.FemaleCount.Value:0;
                         rm.StateEgg = ajis.StateEgg;
                         rm.StateLarva = ajis.StateLarva;
                         rm.StateImago = ajis.StateImago;

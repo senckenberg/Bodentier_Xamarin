@@ -12,7 +12,7 @@ namespace KBS.App.TaxonFinder.Converters
 								object parameter,
 								System.Globalization.CultureInfo culture)
 		{
-			var taxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)value);
+			var taxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(value.ToString()));
 			return taxon != null ? taxon.LocalName : "Unbekannte Art";
 		}
 

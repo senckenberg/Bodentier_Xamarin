@@ -73,6 +73,8 @@ namespace KBS.App.TaxonFinder.Models
 		public AdviceImageJsonItem[] Images { get; set; }
 		[DataMember]
 		public int? DiagnosisTypeId { get; set; }
+        [DataMember]
+		public string TaxonGuid { get; set; }
 
-	}
+    }
 }
