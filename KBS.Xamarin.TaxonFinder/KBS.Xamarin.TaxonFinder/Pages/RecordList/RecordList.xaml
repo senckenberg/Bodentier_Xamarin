@@ -17,8 +17,8 @@
 
 	<ContentPage.Content>
 		<StackLayout CompressedLayout.IsHeadless="True">
-			<StackLayout x:Name="EmptyStack" Padding="10" IsVisible="False" CompressedLayout.IsHeadless="True">
-				<Label Text="Die Fundliste ist leer." VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+			<StackLayout x:Name="EmptyStack" IsVisible="{Binding EmptyStackVisible}" Padding="10" CompressedLayout.IsHeadless="True">
+                <Label Text="Die Fundliste ist leer." IsVisible="{Binding EmptyStackVisible}" VerticalOptions="StartAndExpand" HorizontalOptions="CenterAndExpand"></Label>
 			</StackLayout>
 			<StackLayout IsVisible="{Binding EnableSearch, Mode=TwoWay}" CompressedLayout.IsHeadless="True">
 				<SearchBar Text="{Binding SearchText}" HeightRequest="50" Placeholder="Suchen"></SearchBar>
@@ -59,7 +59,7 @@
 									<RowDefinition Height="25"></RowDefinition>
 								</Grid.RowDefinitions>
 								<StackLayout Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Margin="5,5,0,0">
-                                    <Label Text="{Binding TaxonGuid, Converter={conv:TaxonIdToTaxonNameConverter}}" TextColor="{Binding TaxonId, Converter={conv:TaxonIdToColorConverter}}" FontAttributes="Bold" FontSize="Small"></Label>
+                                    <Label Text="{Binding TaxonGuid, Converter={conv:TaxonGuidToTaxonNameConverter}}" TextColor="{Binding TaxonGuid, Converter={conv:TaxonGuidToColorConverter}}" FontAttributes="Bold" FontSize="Small"></Label>
 								</StackLayout>
                                 <StackLayout Grid.Column="0"
                                              Grid.Row="1"

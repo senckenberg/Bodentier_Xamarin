@@ -82,7 +82,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             }
         }
 
-        public bool AllowTaxonInfoView ()
+        public bool AllowTaxonInfoView()
         {
             return SelectedTaxon.TaxonomyStateName == "sp." ? true : false;
         }
@@ -103,6 +103,18 @@ namespace KBS.App.TaxonFinder.ViewModels
             }
         }
 
+        private bool _showCarouselView;
+        public bool ShowCarouselView
+        {
+            get
+            {
+                return _showCarouselView;
+            }
+            set
+            {
+                _showCarouselView = value; OnPropertyChanged(nameof(ShowCarouselView));
+            }
+        }
 
         #endregion
 
@@ -153,6 +165,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
         #region Methods
 
+ 
         /// <summary>
         /// Fills the ProtectionList based on the current Taxon, sets the height of the ListView.
         /// </summary>
@@ -161,6 +174,7 @@ namespace KBS.App.TaxonFinder.ViewModels
             var taxonProtectionClassList = ((App)App.Current).TaxonProtectionClasses.FindAll(i => i.TaxonId == SelectedTaxon.TaxonId);
             if (!taxonProtectionClassList.Any(i => i.ClassId == 2))
                 taxonProtectionClassList.Insert(0, new TaxonProtectionClass() { ClassId = 2, TaxonId = SelectedTaxon.TaxonId, ClassValue = "nicht besonders geschützt" });
+
             foreach (var protectionClass in taxonProtectionClassList)
             {
                 ProtectionInfo protectionInfo = new ProtectionInfo();

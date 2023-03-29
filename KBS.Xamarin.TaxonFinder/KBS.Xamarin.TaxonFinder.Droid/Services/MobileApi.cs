@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using static KBS.App.TaxonFinder.ViewModels.RecordListViewModel;
+using Android.Views;
+using static Android.Graphics.ImageDecoder;
 
 [assembly: Xamarin.Forms.Dependency(typeof(MobileApi))]
 namespace KBS.App.TaxonFinder.Droid.Services
@@ -25,6 +27,7 @@ namespace KBS.App.TaxonFinder.Droid.Services
         //previous versions use below
         //private static readonly string _loginUrl = $@"{_serviceUrl}ApplicationUser/Login/Mobile";
         private static readonly string _registerUrl = $@"{_serviceUrl}ApplicationUser/Register/Mobile";
+        private static readonly string _deleteUrl = $@"{_serviceUrl}ApplicationUser/Delete/Mobile";
         private static readonly string _adviceServiceUrl_mobile = $@"{_serviceUrl}Advice/SaveAdvice/Mobile";
         private static readonly string _adviceServiceUrl_mobileSync = $@"{_serviceUrl}Advice/SyncAdviceList/Mobile";
         private static readonly string _adviceServiceUrl_mobileSync_dev = $@"{_serviceUrl_dev}Advice/SyncAdviceList/Mobile";
@@ -80,6 +83,34 @@ namespace KBS.App.TaxonFinder.Droid.Services
             {
                 var exc = e.InnerException;
                 throw new Exception("Anmeldung fehlgeschlagen.");
+            }
+        }
+
+        public async Task<string> DeleteUser(UserDeleteRequest uDRequest)
+        {
+            try
+            {
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                    MaxRequestContentBufferSize = 256000
+                };
+
+                _client = new HttpClient(handler);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(uDRequest), Encoding.UTF8, "application/json");
+
+                var response = await _client.PostAsync(_deleteUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var response_content = await response.Content.ReadAsStringAsync();
+                    return response_content;
+                }
+                return "Löschen fehlgeschlagen.";
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 

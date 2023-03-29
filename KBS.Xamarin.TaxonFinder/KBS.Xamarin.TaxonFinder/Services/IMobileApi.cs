@@ -60,7 +60,8 @@ namespace KBS.App.TaxonFinder.Services
 		/// <param name="mail">The optional e-mail adress of the user.</param>
 		/// <returns>Returns a "success"-string if the request was successfull.</returns>
 		Task<string> SendFeedback(string text, string mail);
-	}
+        Task<string> DeleteUser(UserDeleteRequest uDRequest);
+    }
 
 	public class MobileRegisterEventArgs : EventArgs
 	{

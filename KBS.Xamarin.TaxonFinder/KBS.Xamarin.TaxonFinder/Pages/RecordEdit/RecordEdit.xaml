@@ -32,13 +32,13 @@
                             </StackLayout>
                         </StackLayout>
 
-                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Nächstgelegener Ort &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <cust:HtmlLabel Text="&lt;span style='font-family:sans-serif;'&gt;Nächstgelegener Ort &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='font-family:sans-serif;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Entry Keyboard="Default" Text="{Binding HabitatName}" IsEnabled="{Binding IsEditable}" x:Name="PlaceEntry"></Entry>
 
                         <Label Text="Genaue Lage und Lebensraum:" IsEnabled="{Binding IsEditable}"></Label>
                         <Entry Keyboard="Default" Text="{Binding HabitatDescriptionForEvent}" IsEnabled="{Binding IsEditable}" x:Name="HabitatDescriptionForEventEntry"></Entry>
 
-                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Fundmelder*in Name  &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <cust:HtmlLabel Text="&lt;span style='font-family:sans-serif;'&gt;Fundmelder*in Name  &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='font-family:sans-serif;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Entry Keyboard="Default" Text="{Binding ReportedByName}" IsEnabled="{Binding IsEditable}" x:Name="ReportedByEntry"></Entry>
 
                         <Label Text="Datum des Fundes:" IsEnabled="{Binding IsEditable}"></Label>
@@ -62,10 +62,10 @@
                             <Entry Grid.Row="1" Grid.Column="1" Keyboard="Numeric" Text="{Binding FemaleCount}" TextChanged="CountChanged" x:Name="FemaleCount" IsEnabled="{Binding IsEditable}"></Entry>
                         </Grid>
 
-                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Anzahl &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <cust:HtmlLabel Text="&lt;span style='font-family:sans-serif;'&gt;Anzahl &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='font-family:sans-serif;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Entry Keyboard="Numeric" Text="{Binding TotalCount}" x:Name="TotalCount" IsEnabled="{Binding IsEditable}" TextChanged="CountChanged"></Entry>
 
-                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Bestimmungsmethode  &lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <cust:HtmlLabel Text="&lt;span style='font-family:sans-serif;'&gt;Bestimmungsmethode  &lt;/span&gt;&lt;span style='font-family:sans-serif;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Picker x:Name="DiagnosisTypePicker" HorizontalOptions="FillAndExpand" Title="" SelectedIndexChanged="OnDiagnosisTypePickerSelectedIndexChanged" TitleColor="{StaticResource senck_blue}">
                             <Picker.ItemsSource>
                                 <x:Array Type="{x:Type mvvm:DiagnosisTypeModel}" >
@@ -83,7 +83,7 @@
                             </Picker.ItemDisplayBinding>
                         </Picker>
 
-                        <cust:HtmlLabel Text="&lt;span style='color:gray;'&gt;Kommentar an Taxonexpert*in &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='color:gray;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
+                        <cust:HtmlLabel Text="&lt;span style='font-family:sans-serif;'&gt;Kommentar an Taxonexpert*in &lt;/span&gt;&lt;span style='color:red;'&gt;*&lt;/span&gt;&lt;span style='font-family:sans-serif;'&gt;:&lt;/span&gt;" IsEnabled="{Binding IsEditable}"></cust:HtmlLabel>
                         <Editor Text="{Binding HabitatDescription}" IsEnabled="{Binding IsEditable}" AutoSize="TextChanges"></Editor>
 
                         <dpd:ExtendedMap x:Name="map" HorizontalOptions="FillAndExpand" Tap="RecordMap_Tap" VerticalOptions="FillAndExpand" MapType="Hybrid" IsVisible="True" HeightRequest="300">

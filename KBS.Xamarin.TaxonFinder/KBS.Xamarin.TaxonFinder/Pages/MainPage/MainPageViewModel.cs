@@ -83,13 +83,22 @@ namespace KBS.App.TaxonFinder.ViewModels
             get
             {
                 var imageDate = Preferences.Get("imageDate", string.Empty);
-                DateTime imageDateTime = default;
+                if (String.IsNullOrEmpty(imageDate))
+                {
+                    return false;
+                }
+                return true;
+                /*
+                DateTime imageDateTime = DateTime.Now;
                 if (!string.IsNullOrEmpty(imageDate))
+                {
                     imageDateTime = DateTime.Parse(imageDate);
+                }
 
                 var appVersions = ((App)App.Current).AppVersions;
                 var appDateTime = DateTime.Parse(appVersions["TaxonImages.json"].Value<string>());
                 return appDateTime <= imageDateTime;
+                */
             }
         }
 

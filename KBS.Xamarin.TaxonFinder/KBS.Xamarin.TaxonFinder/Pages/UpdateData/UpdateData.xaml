@@ -13,12 +13,12 @@
 	<ContentPage.Content>
 		<ScrollView Padding="10">
 			<StackLayout VerticalOptions="FillAndExpand">
-                <Button FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}" TextColor="#fff" BackgroundColor="{x:StaticResource senck_blue}" x:Name ="LoadDataButton" Text="Arten und Bilder aktualisieren&#x0a;(Hohe Qualität)" Command="{Binding LoadDataCommand}"></Button>
+                <Button FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}" TextColor="#fff" BackgroundColor="{x:StaticResource senck_blue}" x:Name ="LoadDataButton" Text="Arten und Bilder aktualisieren (Hohe Qualität)" Command="{Binding LoadDataCommand}"></Button>
                 <Button FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
                         BackgroundColor="{x:StaticResource font_light}"
                         BorderColor="{x:StaticResource senck_blue}"
                         TextColor="{x:StaticResource senck_blue}"
-                        x:Name ="LoadDataButton_lores" Text="Arten und Bilder aktualisieren&#x0a;(Niedrige Qualität)" Command="{Binding LoadDataCommand_lores}"></Button>
+                        x:Name ="LoadDataButton_lores" Text="Arten und Bilder aktualisieren (Niedrige Qualität)" Command="{Binding LoadDataCommand_lores}"></Button>
                 <Label x:Name="DataStatusLabel"
                        FontSize="{OnIdiom 'Medium', Phone='Small', Tablet='Medium'}"
                        Text="{Binding DataStatus}" HorizontalTextAlignment="Center"></Label>

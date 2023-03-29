@@ -8,24 +8,24 @@
 			 xmlns:dpd="clr-namespace:KBS.App.TaxonFinder.CustomRenderers"
 			 x:Name="TaxonListView">
 
-	<ContentPage.BindingContext>
-		<mvvm:TaxonListViewModel></mvvm:TaxonListViewModel>
-	</ContentPage.BindingContext>
+    <ContentPage.BindingContext>
+        <mvvm:TaxonListViewModel></mvvm:TaxonListViewModel>
+    </ContentPage.BindingContext>
 
-	<ContentPage.ToolbarItems>
-		<ToolbarItem Text="Hilfe" Order="Primary" Clicked="Help_Clicked" Icon="help.png"></ToolbarItem>
-	</ContentPage.ToolbarItems>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Hilfe" Order="Primary" Clicked="Help_Clicked" Icon="help.png"></ToolbarItem>
+    </ContentPage.ToolbarItems>
 
-	<ContentPage.Content>
-		<StackLayout Spacing="0" CompressedLayout.IsHeadless="True">
-                <StackLayout>
-                    <Button Text="Unbekannte Art erfassen" IsVisible="{Binding NewRecord}" BackgroundColor="{x:StaticResource senck_blue}" TextColor="{x:StaticResource font_light}" Clicked="UnknownSpeciesButton_Clicked"></Button>
-                </StackLayout>
-                <SearchBar Text="{Binding SearchText, Mode=TwoWay}" IsVisible="{Binding EnableSearchbar}" Placeholder="{Binding PlaceholderText}"></SearchBar>
-			<ListView CachingStrategy="RecycleElement" x:Name="TaxonListListView" ItemTapped="ListView_ItemTapped" ItemsSource="{Binding SelectedTaxonList}" HasUnevenRows="False" IsGroupingEnabled="True">
-				<ListView.GroupHeaderTemplate>
-					<DataTemplate>
-						<ViewCell CompressedLayout.IsHeadless="True">
+    <ContentPage.Content>
+        <StackLayout Spacing="0" CompressedLayout.IsHeadless="True">
+            <StackLayout>
+                <Button Text="Unbekannte Art erfassen" IsVisible="{Binding NewRecord}" BackgroundColor="{x:StaticResource senck_blue}" TextColor="{x:StaticResource font_light}" Clicked="UnknownSpeciesButton_Clicked"></Button>
+            </StackLayout>
+            <SearchBar Text="{Binding SearchText, Mode=TwoWay}" IsVisible="{Binding EnableSearchbar}" Placeholder="{Binding PlaceholderText}"></SearchBar>
+            <ListView CachingStrategy="RecycleElement" x:Name="TaxonListListView" ItemTapped="ListView_ItemTapped" ItemsSource="{Binding SelectedTaxonList}" HasUnevenRows="False" IsGroupingEnabled="True">
+                <ListView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <ViewCell CompressedLayout.IsHeadless="True">
                             <Grid Margin="5,1,10,3" CompressedLayout.IsHeadless="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="8*"></ColumnDefinition>
@@ -43,10 +43,10 @@
                                        HeightRequest="{OnIdiom 33, Phone=33, Tablet=45}" Padding="1" Margin="0" WidthRequest="100" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Text="{Binding ExpandedIcon}" TextColor="{x:StaticResource senck_blue}"></Label>
                             </Grid>
                         </ViewCell>
-					</DataTemplate>
-				</ListView.GroupHeaderTemplate>
-				<ListView.ItemTemplate>
-					<DataTemplate>
+                    </DataTemplate>
+                </ListView.GroupHeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
                         <ViewCell CompressedLayout.IsHeadless="True">
                             <Grid Margin="5,1,0,2" CompressedLayout.IsHeadless="True">
                                 <Grid Margin="0,0,0,0">
@@ -59,14 +59,14 @@
                                         <RowDefinition Height="{OnIdiom 33, Phone=33, Tablet=45}"></RowDefinition>
                                     </Grid.RowDefinitions>
                                     <!--Image Grid.Column="0" Source="{Binding ListImage}"></-->
-                                    <Label Grid.Column="1" Text="{Binding LocalName}" VerticalOptions="Center" FontSize="{OnIdiom 'Small', Tablet='Medium', Phone='Small'}" HorizontalTextAlignment="Start" HorizontalOptions="StartAndExpand" Margin="0"></Label>
+                                    <Label Grid.Column="1" Text="{Binding Identifier, Converter={conv:TaxonGuidToTaxonNameConverter}}" VerticalOptions="Center" FontSize="{OnIdiom 'Small', Tablet='Medium', Phone='Small'}" HorizontalTextAlignment="Start" HorizontalOptions="StartAndExpand" Margin="0"></Label>
                                     <Label Grid.Column="2" Text="{Binding AllowTaxonInfoViewIcon}" VerticalOptions="Center" ></Label>
                                 </Grid>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
+                </ListView.ItemTemplate>
+            </ListView>
             <StackLayout WidthRequest="100">
                 <Grid WidthRequest="100" HeightRequest="100" ColumnSpacing="0">
                     <Grid.ColumnDefinitions>
@@ -90,5 +90,5 @@
                 </Grid>
             </StackLayout>
         </StackLayout>
-	</ContentPage.Content>
+    </ContentPage.Content>
 </ContentPage>

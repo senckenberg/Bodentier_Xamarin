@@ -57,16 +57,19 @@ namespace KBS.App.TaxonFinder.Views
 					RecordListViewModel.NewRecord = false;
 					//
 					SyncButton.IsVisible = true;
-					//if (ResultLabel.Text == null)
-					//{
-					//	CurrentRecordList.Result = "Alle Fundmeldungen wurden synchronisiert.";
-					//}
-				}
+                    RecordListViewModel.EmptyStackVisible = false;
+                    RecordListViewModel.EnableSearch = true;
+                    //if (ResultLabel.Text == null)
+                    //{
+                    //	CurrentRecordList.Result = "Alle Fundmeldungen wurden synchronisiert.";
+                    //}
+                }
 			}
 			else
 			{
-				EmptyStack.IsVisible = true;
-				/*
+				RecordListViewModel.EmptyStackVisible = true;
+                RecordListViewModel.EnableSearch = false;
+                /*
 				RecordListViewModel.NewRecord = true;
 
 				RecordListViewModel.SyncButtonText = "Fundmeldung anlegen";
@@ -75,7 +78,7 @@ namespace KBS.App.TaxonFinder.Views
 					RecordListViewModel.Result = "Du hast noch keine Funde zum Synchronisieren.";
 				}
 				*/
-			}
+            }
 		}
 
 		private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)

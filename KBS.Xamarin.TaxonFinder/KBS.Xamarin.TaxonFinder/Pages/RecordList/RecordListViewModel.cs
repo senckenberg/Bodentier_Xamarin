@@ -46,10 +46,6 @@ namespace KBS.App.TaxonFinder.ViewModels
         public bool NewRecord { get; set; }
         public bool ShowSyncButton { get; set; }
         public bool EnableSearch { get; set; }
-        private string _taxonNameSafe;
-        public string TaxonNameSafe { get { return _taxonNameSafe; } set { _taxonNameSafe = value; OnPropertyChanged(TaxonNameSafe); } }
-
-
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -113,6 +109,12 @@ namespace KBS.App.TaxonFinder.ViewModels
                 _selectedRecordList = value;
                 OnPropertyChanged(nameof(SelectedRecordList));
             }
+        }
+        private bool _emptyStackVisible;
+        public bool EmptyStackVisible
+        {
+            get { return _emptyStackVisible; }
+            set { _emptyStackVisible = value; OnPropertyChanged(nameof(EmptyStackVisible)); }
         }
 
         #endregion
@@ -199,6 +201,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                     AdviceList = resultJson,
                     DeviceId = DependencyService.Get<IDeviceId>().GetDeviceId(),
                     DeviceHash = Database.GetRegister().Result.DeviceHash,
+                    UserName = Database.GetRegister().Result.UserName
                 };
 
                 result = await _mobileApi.SyncAdvices(syncRequest);
@@ -230,11 +233,15 @@ namespace KBS.App.TaxonFinder.ViewModels
                 SelectedRecordList.Clear();
                 Records = await Database.GetRecordsAsync();
                 SelectedRecordList = new ObservableCollection<RecordModel>(Records.Where(i => i.DeletionDate == null));
+                if(SelectedRecordList.Count > 0)
+                {
+                    EmptyStackVisible = false;
+                    EnableSearch = true;
+                    OnPropertyChanged(nameof(EnableSearch));
+                }
                 Result = result;
                 ShowSyncButton = false;
                 OnPropertyChanged(nameof(ShowSyncButton));
-                OnPropertyChanged(nameof(SelectedRecordList));
-
             }
             catch (Exception ex)
             {
@@ -476,6 +483,7 @@ namespace KBS.App.TaxonFinder.ViewModels
         {
             public string DeviceId { get; set; }
             public string DeviceHash { get; set; }
+            public string UserName { get; set; }
             public List<AdviceJsonItemSync> AdviceList { get; set; }
         }
 

@@ -23,7 +23,8 @@ namespace KBS.App.TaxonFinder.Views
 
         private void SkipButton_Clicked(object sender, EventArgs e)
         {
-            Navigation.PopAsync();
+            Preferences.Set("dontShowTutorialOnStartup", "true");
+            Navigation.PushAsync(new MainPage());
         }
 
         private void Help_Clicked(object sender, EventArgs e)

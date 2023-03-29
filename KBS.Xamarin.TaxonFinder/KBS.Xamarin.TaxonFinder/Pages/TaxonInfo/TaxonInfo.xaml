@@ -5,7 +5,8 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 x:Class="KBS.App.TaxonFinder.Views.TaxonInfo"
 			 xmlns:cust="clr-namespace:KBS.App.TaxonFinder.CustomRenderers"
-			 xmlns:mvvm="clr-namespace:KBS.App.TaxonFinder.ViewModels">
+			 xmlns:mvvm="clr-namespace:KBS.App.TaxonFinder.ViewModels"
+             xmlns:data="clr-namespace:KBS.App.TaxonFinder.Data">
 
     <ContentPage.BindingContext>
         <mvvm:TaxonInfoViewModel></mvvm:TaxonInfoViewModel>
@@ -31,10 +32,12 @@
                 <StackLayout CompressedLayout.IsHeadless="True">
                     <ScrollView>
                         <StackLayout>
-                            <StackLayout IsVisible="{Binding SelectedTaxon.HasImages}" HeightRequest="395">
-                                <CarouselView ItemsSource="{Binding SelectedTaxon.Images}"
-                                  IsScrollAnimated="True"
-                                  IsBounceEnabled="True" HorizontalScrollBarVisibility="Always">
+                            <StackLayout x:Name="CarouselStackContainer" IsVisible="{Binding SelectedTaxon.HasImages}" HeightRequest="395">
+                                <CarouselView x:Name="ImageCarousel"                                              
+                                              IsScrollAnimated="False"
+                                              EmptyView="Keine Fotos vorhanden. Aktualisierung?"
+                                              IsBounceEnabled="False" HorizontalScrollBarVisibility="Always"
+                                              x:DataType="data:TaxonImage">
                                     <CarouselView.ItemTemplate>
                                         <DataTemplate>
                                             <StackLayout>

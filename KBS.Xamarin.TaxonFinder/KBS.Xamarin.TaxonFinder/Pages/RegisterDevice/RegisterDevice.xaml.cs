@@ -25,9 +25,22 @@ namespace KBS.App.TaxonFinder.Views
 		void AddUserButton_Clicked(object sender, EventArgs e)
 		{
 			TryingToRegister = true;
-			LogoutButton.IsVisible = false;
+			//LogoutButton.IsVisible = false;
 			RegisterStack.IsVisible = true;
 		}
+
+		public async void DeleteUserButton_Clicked (object sender, EventArgs e)
+		{
+            var result = await DisplayActionSheet("Wirklich löschen?", "Abbrechen", null, "Ja", "Nein");
+
+            if (result == "Ja")
+            {
+				//Navigation.PushAsync(new OrderSelection());
+				IsBusy = true;
+                await ((RegisterDeviceViewModel)BindingContext).DeleteUser();
+            }
+		}
+
 		private void Help_Clicked(object sender, EventArgs e)
 		{
 			Navigation.PushAsync(new HelpPage(this));

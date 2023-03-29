@@ -202,8 +202,15 @@ namespace KBS.App.TaxonFinder.ViewModels
                                     {
                                         if (downloadFile != null)
                                         {
+                                            try
+                                            {
+                                                await _fileHelper.CopyFileToLocalAsync(downloadFile, fileName.Value);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Trace.WriteLine(ex);
+                                            }
 
-                                            await _fileHelper.CopyFileToLocalAsync(downloadFile, fileName.Value);
                                         }
                                     }
 
@@ -233,6 +240,21 @@ namespace KBS.App.TaxonFinder.ViewModels
                     var versionDate = versionsJson["TaxonImages.json"].Value<string>();
                     var imageDate = versionsJson["Versions.json"].Value<string>();
                     Preferences.Set("imageDate", imageDate);
+                    try
+                    {
+                        ((App)App.Current).AppVersions["Versions.json"] = DateTime.Parse(versionsJson["Versions.json"].Value<string>());
+                        ((App)App.Current).AppVersions["TaxonImages.json"] = DateTime.Parse(versionsJson["TaxonImages.json"].Value<string>());
+                        ((App)App.Current).AppVersions["Taxa.json"] = DateTime.Parse(versionsJson["Taxa.json"].Value<string>());
+                        ((App)App.Current).AppVersions["TaxonFilterItems.json"] = DateTime.Parse(versionsJson["TaxonFilterItems.json"].Value<string>());
+                        ((App)App.Current).AppVersions["TaxonProtectionClasses.json"] = DateTime.Parse(versionsJson["TaxonProtectionClasses.json"].Value<string>());
+                        ((App)App.Current).AppVersions["TaxonSynonyms.json"] = DateTime.Parse(versionsJson["TaxonSynonyms.json"].Value<string>());
+                        ((App)App.Current).AppVersions["TaxonTagFilterFilterGroups.json"] = DateTime.Parse(versionsJson["TaxonTagFilterFilterGroups.json"].Value<string>());
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                    }
+
                     DataStatus = $"Daten vom Stand {DateTime.Parse(versionDate).ToString("dd.MM.yyyy")}";
 
                     //Update Taxon-References in Records Database
@@ -295,7 +317,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                         }
                     }
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Trace.WriteLine("Fatal error updating recordmodel");
                 Trace.Write(ex);
@@ -431,10 +454,11 @@ namespace KBS.App.TaxonFinder.ViewModels
                                     var jsonFile = await _fileHelper.DownloadFileAsync(ServiceUrl + fileName);
                                     _fileHelper.CopyFileToLocal(jsonFile, fileName);
                                     cnt++;
-                                    if(versionJson != null && versionJson.Count != null)
+                                    if (versionJson != null && versionJson.Count != null)
                                     {
                                         Result = String.Format("Download der Update-Informationen {0} / {1} komplett.", cnt, versionJson.Count);
-                                    } else
+                                    }
+                                    else
                                     {
                                         Result = String.Format("Lade der Update-Informationen .. ");
                                     }

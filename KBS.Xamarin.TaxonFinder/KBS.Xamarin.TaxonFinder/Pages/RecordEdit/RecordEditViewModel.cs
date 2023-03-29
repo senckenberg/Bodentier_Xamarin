@@ -160,7 +160,6 @@ namespace KBS.App.TaxonFinder.ViewModels
                 LocalRecordId = value;
                 IsEditable = _selectedRecord.IsEditable;
                 TaxonId = _selectedRecord.TaxonId;
-                TaxonGuid = _selectedRecord.TaxonGuid;
                 CreationDate = _selectedRecord.CreationDate;
                 Identifier = _selectedRecord.Identifier;
                 RecordDate = _selectedRecord.RecordDate;
@@ -392,12 +391,11 @@ namespace KBS.App.TaxonFinder.ViewModels
             (Position != PositionOption.Pin && PositionList.Count != 0)
             && !String.IsNullOrEmpty(ReportedByName)) && TaxonId >= -1 && !string.IsNullOrEmpty(HabitatDescription))
             {
-                Taxon tempTax = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(TaxonGuid));
+                Taxon tempTax = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(TaxonId));
 
                 var recordModel = new RecordModel
                 {
-                    TaxonId = tempTax.TaxonId,
-                    TaxonGuid = tempTax.Identifier.ToString(),
+                    TaxonId = TaxonId,
                     CreationDate = DateTime.Now,
                     Identifier = String.IsNullOrEmpty(Identifier) ? Guid.NewGuid().ToString() : Identifier,
                     IsSynced = false,
@@ -422,7 +420,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                 if (tempTax != null)
                 {
-                    tempTax.Identifier.ToString();
+                    recordModel.TaxonGuid = tempTax.Identifier.ToString();
                     TaxonName = tempTax.TaxonName;
                 }
 
@@ -447,7 +445,7 @@ namespace KBS.App.TaxonFinder.ViewModels
 
                 if (ExistingRecord)
                 {
-                    recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
+                    recordModel.LastEdit = TruncateDateTime(DateTime.UtcNow, TimeSpan.FromSeconds(1));
                     recordModel.LocalRecordId = this.LocalRecordId;
                     await Database.UpdateRecord(recordModel);
                     var positionsToDelete = await Database.GetPositionAsync(recordModel.LocalRecordId);
@@ -458,7 +456,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 }
                 else
                 {
-                    recordModel.LastEdit = TruncateDateTime(DateTime.Now, TimeSpan.FromSeconds(1));
+                    recordModel.LastEdit = TruncateDateTime(DateTime.UtcNow, TimeSpan.FromSeconds(1));
                     await Database.SaveRecord(recordModel);
                 }
 
@@ -673,15 +671,14 @@ namespace KBS.App.TaxonFinder.ViewModels
                 baseString = fileHelper.GetBase64FromImagePath(media.Path);
                 baseList.Add(new AdviceImageJsonItem(baseString, media.Path));
             }
-            var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(_selectedRecord.TaxonGuid.ToString()));
+            var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(_selectedRecord.TaxonId));
             var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
 
             AdviceJsonItem adviceJsonItem = new AdviceJsonItem
             {
                 AdviceId = _selectedRecord.LocalRecordId,
                 Identifier = Guid.Parse(_selectedRecord.Identifier),
-                TaxonId = tempTaxon.TaxonId,
-                TaxonGuid = _selectedRecord.TaxonGuid,
+                TaxonId = _selectedRecord.TaxonId,
                 TaxonFullName = taxonName,
                 AdviceDate = _selectedRecord.RecordDate,
                 AdviceCount = _selectedRecord.TotalCount,
@@ -747,7 +744,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                         Trace.WriteLine(ex);
                     }
                 }
-                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(rm.TaxonGuid));
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(rm.TaxonId));
 
                 if (tempTaxon == null)
                 {
@@ -758,7 +755,7 @@ namespace KBS.App.TaxonFinder.ViewModels
                 {
                     GlobalAdviceId = rm.GlobalAdviceId,
                     Identifier = Guid.Parse(rm.Identifier),
-                    TaxonId = tempTaxon.TaxonId,
+                    TaxonId = rm.TaxonId,
                     TaxonFullName = tempTaxon.TaxonName,
                     TaxonGuid = tempTaxon.Identifier,
                     AdviceDate = rm.RecordDate,
@@ -782,8 +779,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                     ImageLegend = rm.ImageLegend,
                     ApprovalStateId = rm.ApprovalStateId,
                     //decimal.Round(yourValue, 2, MidpointRounding.AwayFromZero);
-                    Lat = rm.Position == PositionOption.Pin ? Decimal.Parse(rm.Latitude.ToString().Replace(',', '.'), CultureInfo.InvariantCulture).ToString("0.000000").Replace('.', ',') : Math.Round((decimal)RecordEdit.GetCenterOfPositions(PositionList).Latitude, 6, MidpointRounding.AwayFromZero).ToString("N6"),
-                    Lon = rm.Position == PositionOption.Pin ? Math.Round((decimal)rm.Longitude, 6, MidpointRounding.AwayFromZero).ToString("0.000000").Replace('.', ',') : Math.Round((decimal)RecordEdit.GetCenterOfPositions(PositionList).Longitude, 6, MidpointRounding.AwayFromZero).ToString("N6"),
+                    Lat = rm.Position == PositionOption.Pin ? rm.Latitude.ToString(CultureInfo.InvariantCulture) : RecordEdit.GetCenterOfPositions(PositionList).Latitude.ToString(CultureInfo.InvariantCulture),
+                    Lon = rm.Position == PositionOption.Pin ? rm.Longitude.ToString(CultureInfo.InvariantCulture) : RecordEdit.GetCenterOfPositions(PositionList).Longitude.ToString(CultureInfo.InvariantCulture),
                     AccuracyTypeId = rm.AccuracyTypeId,
                     LocalityTemplateId = rm.LocalityTemplateId,
                     Images = baseList.ToList(),
@@ -808,15 +805,15 @@ namespace KBS.App.TaxonFinder.ViewModels
         {
             try
             {
-                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.Identifier == Guid.Parse(TaxonGuid));
+                var tempTaxon = ((App)App.Current).Taxa.FirstOrDefault(i => i.TaxonId == (int)(ajis.TaxonId));
                 var taxonName = (tempTaxon != null) ? tempTaxon.TaxonName : "";
 
                 RecordModel rm = new RecordModel
                 {
                     GlobalAdviceId = ajis.GlobalAdviceId,
                     Identifier = ajis.Identifier.ToString(),
-                    TaxonId = tempTaxon.TaxonId,
-                    TaxonGuid = tempTaxon.Identifier.ToString(),
+                    TaxonId = ajis.TaxonId,
+                    TaxonGuid = ajis.TaxonGuid.ToString(),
                     RecordDate = (DateTime)ajis.AdviceDate,
                     TotalCount = (int)ajis.AdviceCount,
                     HabitatName = ajis.AdviceCity,
@@ -836,8 +833,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                     DeletionDate = ajis.DeletionDate,
                     ImageCopyright = ajis.ImageCopyright,
                     ImageLegend = ajis.ImageLegend,
-                    Latitude = Double.Parse(ajis.Lat.ToString()),
-                    Longitude = Double.Parse(ajis.Lon.ToString()),
+                    Latitude = Double.Parse(ajis.Lat.ToString(CultureInfo.InvariantCulture)),
+                    Longitude = Double.Parse(ajis.Lon.ToString(CultureInfo.InvariantCulture)),
                     AccuracyTypeId = ajis.AccuracyTypeId,
                     LocalityTemplateId = ajis.LocalityTemplateId,
                     IsSynced = ajis.IsSynced,

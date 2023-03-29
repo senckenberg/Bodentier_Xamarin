@@ -9,6 +9,7 @@ namespace KBS.App.TaxonFinder.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+
             if (value != null)
             {
                 if ((int)value < 0 && Application.Current.Resources.TryGetValue("danger", out var colourDanger))
@@ -16,7 +17,7 @@ namespace KBS.App.TaxonFinder.Converters
                     return (Color)colourDanger;
                 }
             }
-            
+
             if (Application.Current.Resources.TryGetValue("font_dark", out var colourFontDark))
             {
                 return (Color)colourFontDark;

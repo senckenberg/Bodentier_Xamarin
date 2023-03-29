@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using static KBS.App.TaxonFinder.ViewModels.RecordListViewModel;
+using System.Diagnostics;
 
 namespace KBS.App.TaxonFinder.ViewModels
 {
@@ -126,7 +128,8 @@ namespace KBS.App.TaxonFinder.ViewModels
                 if (result == "invalid user")
                 {
                     throw new Exception("Anmeldung fehlgeschlagen.");
-                } else
+                }
+                else
                 {
                     DeviceUserInfo dui = JsonConvert.DeserializeObject<DeviceUserInfo>(result);
                     await Database.Register(dui.DeviceHash, Username, dui.FirstName, dui.LastName);
@@ -181,11 +184,13 @@ namespace KBS.App.TaxonFinder.ViewModels
                     IsBusy = true;
                     Result = await _mobileApi.AddNewUser(Givenname, Surname, Username, Password, $"Registrierung über App {DateTime.Now.ToString("dd.MM.yyyy")}", "app");
                     IsBusy = false;
+                    
                     //if result positive
-                    IsLoggedIn = true;
+                    //IsLoggedIn = true;
+                    
                     if (Result == "success")
                     {
-                        TopResult = "Registrierung als " + Username + " wurde beantragt und wird zeitnah bearbeitet. Es erfolgt eine Benachrichtigung per E-Mail.";
+                        Result = "Registrierung als " + Username + " wurde beantragt und wird zeitnah bearbeitet. Es erfolgt eine Benachrichtigung per E-Mail.";
                     }
                     else
                     {
@@ -214,6 +219,46 @@ namespace KBS.App.TaxonFinder.ViewModels
         }
 
         #endregion
+
+        public async Task DeleteUser()
+        {
+            
+            try
+            {
+                string DeviceId = DependencyService.Get<IDeviceId>().GetDeviceId();
+                RegisterModel regModel = await Database.GetRegister();
+                string DeviceHash = regModel.DeviceHash;
+                string UserName = regModel.UserName;
+
+                if (!String.IsNullOrEmpty(DeviceId) && !String.IsNullOrEmpty(DeviceHash) && !String.IsNullOrEmpty(UserName))
+                {
+                    UserDeleteRequest uDRequest = new UserDeleteRequest(DeviceId = DeviceId, DeviceHash = DeviceHash, UserName = UserName);
+                    string Result = await _mobileApi.DeleteUser(uDRequest);
+                    IsBusy = false;
+                    //if result positive
+                    if (Result.Contains("success"))
+                    {
+                        await Logout();
+                        Result = "Der Account wurde erfolgreich gelöscht und Du wurdest ausgeloggt.";
+                        await Application.Current.MainPage.DisplayAlert("Account gelöscht", "Der Account wurde erfolgreich gelöscht und Du wurdest ausgeloggt.", "Okay");
+                    }
+                    else
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Informationen fehlerhaft", "Wir konnten die benötigten Informationen nicht auslesen, bitte nutzen Sie die Feedback-Funktion der App um eine*n Admin zu kontaktieren", "Okay");
+                    }
+                    OnPropertyChanged(nameof(TopResult));
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Informationen fehlerhaft", "Wir konnten die benötigten Informationen nicht auslesen, bitte nutzen Sie die Feedback-Funktion der App um eine*n Admin zu kontaktieren", "Okay");
+                }
+            }
+            catch (Exception e)
+            {
+                IsBusy = false;
+                Result = e.Message;
+            }
+        }
 
         #region Logout Command
 

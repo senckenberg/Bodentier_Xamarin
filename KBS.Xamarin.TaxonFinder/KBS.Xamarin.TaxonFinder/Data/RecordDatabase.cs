@@ -4,6 +4,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -18,12 +19,12 @@ namespace KBS.App.TaxonFinder.Data
             database = new SQLiteAsyncConnection(dbPath);
 
             Task[] tasks = new Task[4];
-            tasks[0] = database.CreateTableAsync<MediaFileModel>();
-            tasks[1] = database.CreateTableAsync<RecordModel>();
+            tasks[0] = database.CreateTableAsync<RecordModel>();
+            tasks[1] = database.CreateTableAsync<MediaFileModel>();
             tasks[2] = database.CreateTableAsync<RegisterModel>();
             tasks[3] = database.CreateTableAsync<PositionModel>();
 
-            Task.WhenAll(tasks);
+            Task.WaitAll(tasks);
 
         }
         public Task<int> Register(string deviceHash, string username)
@@ -92,6 +93,14 @@ namespace KBS.App.TaxonFinder.Data
 
         public Task<int> Logout()
         {
+            try
+            {
+                database.Table<RecordModel>().DeleteAsync(i => i.LocalRecordId != null);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex);
+            }
             return (database.InsertOrReplaceAsync(new RegisterModel { ID = 0, DeviceHash = null }));
         }
 
@@ -187,10 +196,10 @@ namespace KBS.App.TaxonFinder.Data
                         rm.TaxonId = ajis.TaxonId;
                         rm.TaxonGuid = ajis.TaxonGuid.ToString();
                         rm.RecordDate = (DateTime)ajis.AdviceDate;
-                        rm.TotalCount = ajis.AdviceCount.HasValue? ajis.AdviceCount.Value:0;
+                        rm.TotalCount = ajis.AdviceCount.HasValue ? ajis.AdviceCount.Value : 0;
                         rm.HabitatName = ajis.AdviceCity;
-                        rm.MaleCount = ajis.MaleCount.HasValue? ajis.MaleCount.Value:0;
-                        rm.FemaleCount = ajis.FemaleCount.HasValue ? ajis.FemaleCount.Value : 0;
+                        rm.MaleCount = ajis.MaleCount;
+                        rm.FemaleCount = ajis.FemaleCount;
                         rm.StateEgg = ajis.StateEgg;
                         rm.StateLarva = ajis.StateLarva;
                         rm.StateImago = ajis.StateImago;
@@ -205,8 +214,8 @@ namespace KBS.App.TaxonFinder.Data
                         rm.DeletionDate = ajis.DeletionDate;
                         rm.ImageCopyright = ajis.ImageCopyright;
                         rm.ImageLegend = ajis.ImageLegend;
-                        rm.Latitude = Double.Parse(ajis.Lat.ToString().Replace(',', '.'));
-                        rm.Longitude = Double.Parse(ajis.Lon.ToString().Replace(',', '.'));
+                        rm.Latitude = Double.Parse(ajis.Lat.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
+                        rm.Longitude = Double.Parse(ajis.Lon.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
                         rm.AccuracyTypeId = ajis.AccuracyTypeId;
                         rm.LocalityTemplateId = ajis.LocalityTemplateId;
                         //rm.IsSynced = ajis.IsSynced;
@@ -235,10 +244,10 @@ namespace KBS.App.TaxonFinder.Data
                         rm.TaxonId = ajis.TaxonId;
                         rm.TaxonGuid = ajis.TaxonGuid.ToString();
                         rm.RecordDate = (DateTime)ajis.AdviceDate;
-                        rm.TotalCount = ajis.AdviceCount.HasValue? ajis.AdviceCount.Value:0;
+                        rm.FemaleCount = (int?)ajis.FemaleCount;
+                        rm.MaleCount = (int?)ajis.MaleCount;
+                        rm.TotalCount = (int?)ajis.AdviceCount;
                         rm.HabitatName = ajis.AdviceCity;
-                        rm.MaleCount = ajis.MaleCount.HasValue? ajis.MaleCount.Value:0;
-                        rm.FemaleCount = ajis.FemaleCount.HasValue? ajis.FemaleCount.Value:0;
                         rm.StateEgg = ajis.StateEgg;
                         rm.StateLarva = ajis.StateLarva;
                         rm.StateImago = ajis.StateImago;
@@ -253,8 +262,8 @@ namespace KBS.App.TaxonFinder.Data
                         rm.DeletionDate = ajis.DeletionDate;
                         rm.ImageCopyright = ajis.ImageCopyright;
                         rm.ImageLegend = ajis.ImageLegend;
-                        rm.Latitude = Double.Parse(ajis.Lat.ToString().Replace(',', '.'));
-                        rm.Longitude = Double.Parse(ajis.Lon.ToString().Replace(',', '.'));
+                        rm.Latitude = Double.Parse(ajis.Lat.Replace(',','.'), NumberStyles.Any, CultureInfo.InvariantCulture);
+                        rm.Longitude = Double.Parse(ajis.Lon.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture);
                         rm.AccuracyTypeId = ajis.AccuracyTypeId;
                         rm.LocalityTemplateId = ajis.LocalityTemplateId;
                         rm.IsSynced = true;

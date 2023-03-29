@@ -57,7 +57,7 @@ namespace KBS.App.TaxonFinder.Models
         public int? FemaleCount { get; set; }
         public string ReportedByName { get { return _reportedByName; } set { _reportedByName = value; } }
         public string ReportedByUserId { get; set; }
-        public int TotalCount { get; set; }
+        public int? TotalCount { get; set; }
         public bool AutoPosition { get { return _autoPosition; } set { _autoPosition = value; OnPropertyChanged(nameof(AutoPosition)); } }
         public Data.PositionInfo.PositionOption Position { get; set; }
         public int? LocalityTemplateId { get { return _localityTemplateId; } set { _localityTemplateId = value; } }

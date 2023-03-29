@@ -73,8 +73,21 @@ namespace KBS.App.TaxonFinder.Models
 		public AdviceImageJsonItem[] Images { get; set; }
 		[DataMember]
 		public int? DiagnosisTypeId { get; set; }
-        [DataMember]
-		public string TaxonGuid { get; set; }
 
+	}
+
+    public class UserDeleteRequest
+    {
+        public string DeviceHash { get; set; }
+        public string DeviceId { get; set; }
+        public string UserName { get; set; }
+
+        public UserDeleteRequest(string v1, string v2, string v3)
+        {
+            this.DeviceId = v1;
+            this.DeviceHash = v2;
+            this.UserName = v3;
+        }
     }
+
 }

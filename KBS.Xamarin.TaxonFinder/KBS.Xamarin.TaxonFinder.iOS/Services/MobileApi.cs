@@ -20,12 +20,15 @@ namespace KBS.App.TaxonFinder.iOS.Services
         private HttpClient _client = new HttpClient() { MaxResponseContentBufferSize = 256000 };
 
         private static readonly string _serviceUrl = "https://www.idoweb.bodentierhochvier.de/api/";
-        private static readonly string _loginUrl = $"{_serviceUrl}ApplicationUser/Login/Mobile";
+        //private static readonly string _loginUrl = $"{_serviceUrl}ApplicationUser/Login/Mobile";
+        private static readonly string _loginUrl = $@"{_serviceUrl}ApplicationUser/Login/MobileV2";
+        private static readonly string _deleteUrl = $@"{_serviceUrl}ApplicationUser/Delete/Mobile";
         private static readonly string _registerUrl = $"{_serviceUrl}ApplicationUser/Register/Mobile";
         private static readonly string _adviceServiceUrl_mobile = $"{_serviceUrl}Advice/SaveAdvice/Mobile";
         private static readonly string _adviceServiceUrl_mobileSync = $"{_serviceUrl}Advice/SyncAdviceList/Mobile";
         private static readonly string _changesServiceUrl = $"{_serviceUrl}Advice/SyncAdvices";
         private static readonly string _mailServiceUrl = $"{_serviceUrl}values/Mail/SendFeedback";
+
         private static RecordDatabase _database;
 
         public MobileApi()
@@ -65,7 +68,8 @@ namespace KBS.App.TaxonFinder.iOS.Services
                     var response_content = await response.Content.ReadAsStringAsync();
                     if (response_content.Contains('"'))
                     {
-                        response_content = JsonConvert.DeserializeObject(response_content) as string;
+                        var response_content_des = JsonConvert.DeserializeObject(response_content);
+                        return response_content_des.ToString();
                     }
                     return response_content;
                 }
@@ -107,6 +111,34 @@ namespace KBS.App.TaxonFinder.iOS.Services
                 throw e;
             }
 
+        }
+
+        public async Task<string> DeleteUser(UserDeleteRequest uDRequest)
+        {
+            try
+            {
+                var handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
+                    MaxRequestContentBufferSize = 256000
+                };
+
+                _client = new HttpClient(handler);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(uDRequest), Encoding.UTF8, "application/json");
+
+                var response = await _client.PostAsync(_deleteUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var response_content = await response.Content.ReadAsStringAsync();
+                    return response_content;
+                }
+                return "Löschen fehlgeschlagen.";
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public async Task<string> GetChangesByDevice(AuthorizationJson auth)

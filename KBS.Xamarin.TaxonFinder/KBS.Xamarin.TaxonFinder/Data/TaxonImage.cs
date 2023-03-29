@@ -17,7 +17,6 @@ namespace KBS.App.TaxonFinder.Data
         private ImageSource _hiResSource = null;
         private static readonly Assembly assembly = typeof(Taxon).GetTypeInfo().Assembly;
         private static readonly string assemblyName = assembly.GetName().Name;
-        public static ImageSource inaString = ImageSource.FromResource($"{assemblyName}.Images.General.ina.jpg");
 
         #endregion
 
